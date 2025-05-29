@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <CsWinRTWindowsMetadata>sdk</CsWinRTWindowsMetadata>
-    <Version>$(VersionPrefix)2.0.2</Version>
+    <Version>$(VersionPrefix)2.0.3</Version>
   </PropertyGroup>
 
 </Project>

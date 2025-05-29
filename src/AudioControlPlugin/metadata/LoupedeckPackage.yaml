@@ -18,7 +18,7 @@ description: "Control Windows audio from your Loupedeck: volume adjusment, mute/
 pluginFileName: AudioControlPlugin.dll
 
 # Plugin version.
-version: 2.0.2
+version: 2.0.3
 
 # Author of the plugin. The author can be a company or an individual developer.
 author: insideGen
