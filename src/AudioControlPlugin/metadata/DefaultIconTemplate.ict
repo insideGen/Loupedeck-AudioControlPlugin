@@ -1,0 +1,19 @@
+{
+  "backgroundColor": 4278239231,
+  "items": [
+    {
+      "image": "",
+      "imageFileName": null,
+      "imageColor": 4294967040,
+      "imageRotation": "None",
+      "isVisible": true,
+      "itemType": "Image",
+      "area": {
+        "x": 0,
+        "y": 0,
+        "width": 100,
+        "height": 100
+      }
+    }
+  ]
+}
