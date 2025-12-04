@@ -13,7 +13,7 @@ namespace Loupedeck.AudioControlPlugin
     internal class AudioSwitchDeviceCommand : ActionEditorCommand
     {
         
-        public const string DEVICE_LIST = "deviceList";
+        public const string DEVICE = "device";
         private ConcurrentDictionary<string, string> KeyValuePairs { get; }
 
         public AudioSwitchDeviceCommand()
@@ -23,7 +23,7 @@ namespace Loupedeck.AudioControlPlugin
             base.GroupName   = "";
             base.IsWidget    = true;
 
-            base.ActionEditor.AddControlEx(new ActionEditorListbox(name: DEVICE_LIST, labelText: "Select Audio Device"));
+            base.ActionEditor.AddControlEx(new ActionEditorListbox(name: DEVICE, labelText: "Select Audio Device"));
             base.ActionEditor.ListboxItemsRequested += this.OnListboxItemsRequested;
 
             this.KeyValuePairs = new ConcurrentDictionary<string, string>();
@@ -31,12 +31,21 @@ namespace Loupedeck.AudioControlPlugin
 
         protected override bool RunCommand(ActionEditorActionParameters actionParameters)
         {
-            return base.RunCommand(actionParameters);
+            if(actionParameters.TryGetString(DEVICE, out var deviceId))
+            {
+                var device = AudioControl.MMAudio.RenderDevices.FirstOrDefault(x => x.Id == deviceId);
+                if (device != null)
+                {
+                    AudioControl.MMAudio.SetDefaultAudioEndpoint(device.Id, Role.Multimedia);
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void OnListboxItemsRequested(object sender, ActionEditorListboxItemsRequestedEventArgs e)
         {
-            if (e.ControlName.Equals(DEVICE_LIST))
+            if (e.ControlName.Equals(DEVICE))
             {
                 foreach (IAudioControlDevice device in AudioControl.MMAudio.RenderDevices.Where(x => x.State == DeviceState.Active))
                 {
