@@ -14,6 +14,8 @@ namespace Loupedeck.AudioControlPlugin
     {
         
         public const string DEVICE = "device";
+        public const string TYPE = "type";
+
         private ConcurrentDictionary<string, string> KeyValuePairs { get; }
 
         public AudioSwitchDeviceCommand()
@@ -24,6 +26,7 @@ namespace Loupedeck.AudioControlPlugin
             base.IsWidget    = true;
 
             base.ActionEditor.AddControlEx(new ActionEditorListbox(name: DEVICE, labelText: "Select Audio Device"));
+            base.ActionEditor.AddControlEx(new ActionEditorListbox(name: TYPE, labelText: "Select Type"));
             base.ActionEditor.ListboxItemsRequested += this.OnListboxItemsRequested;
 
             this.KeyValuePairs = new ConcurrentDictionary<string, string>();
@@ -31,12 +34,13 @@ namespace Loupedeck.AudioControlPlugin
 
         protected override bool RunCommand(ActionEditorActionParameters actionParameters)
         {
-            if(actionParameters.TryGetString(DEVICE, out var deviceId))
+            if(actionParameters.TryGetString(DEVICE, out var deviceId) &&
+                actionParameters.TryGetString(TYPE, out var typeName))
             {
                 var device = AudioControl.MMAudio.RenderDevices.FirstOrDefault(x => x.Id == deviceId);
                 if (device != null)
                 {
-                    AudioControl.MMAudio.SetDefaultAudioEndpoint(device.Id, Role.Multimedia);
+                    AudioControl.MMAudio.SetDefaultAudioEndpoint(device.Id, Enum.Parse<Role>(typeName));
                     return true;
                 }
             }
@@ -51,6 +55,13 @@ namespace Loupedeck.AudioControlPlugin
                 {
                     e.AddItem(name: device.Id, displayName: device.DisplayName, description: "");
                     this.KeyValuePairs.TryAdd(device.Id, device.DisplayName);
+                }
+            }
+            else if (e.ControlName.Equals(TYPE))
+            {
+                foreach (string role in Enum.GetNames(typeof(Role)))
+                {
+                    e.AddItem(name: role, displayName: role, description: $"Set as default {role.ToLower()} device");
                 }
             }
         }
