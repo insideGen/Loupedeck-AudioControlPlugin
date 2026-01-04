@@ -210,7 +210,7 @@
             Bitmap iconBitmap = null;
             if (!string.IsNullOrWhiteSpace(iconPath))
             {
-                int iconSize = 32;
+                //int iconSize = 32;
                 string[] values = iconPath.Split(',');
                 string path = values[0];
                 if (path.StartsWith('@'))
@@ -285,7 +285,7 @@
                 //    {
                 //        shellItem = Shell32.SHCreateItemFromParsingName(path, IntPtr.Zero, typeof(IShellItem2).GUID);
                 //    }
-                    
+
                 //    ((IShellItemImageFactory)shellItem).GetImage(new SIZE { cx = iconSize, cy = iconSize }, SIIGBF.SIIGBF_RESIZETOFIT, out nint bmp);
                 //    try
                 //    {

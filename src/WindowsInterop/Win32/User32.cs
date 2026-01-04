@@ -1,7 +1,6 @@
 ﻿namespace WindowsInterop.Win32
 {
     using System;
-    using System.ComponentModel;
     using System.Runtime.InteropServices;
     using System.Text;
 
