@@ -28,19 +28,25 @@ Displays volume and peak meter and allows volume control.
 
 **`Configuration`**
 
-| Parameter | Type    | Value                        | Description                                                                                                                                                                                  |
-| --------- | ------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Type      | Listbox | Capture, Render, Application | Capture and Render: lists all active devices. Application: lists all running apps currently emitting sound.                                                                                  |
-| Endpoint  | Listbox | *                            | Endpoint name. **Default communications** and **Default multimedia** are dynamic endpoints for Capture and Render type. **Foreground application** is dynamic endpoint for Application type. |
-| Channel   | Listbox | None, A, B, C                | Channel allows to bind this `Audio touch action` to an `Audio encoder action`.                                                                                                               |
+| Parameter                    | Type    | Value                                          | Description                                                                                                                                                                                  |
+| ---------------------------- | ------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Channel                      | Listbox | None, A, B, C                                  | Channel allows to bind this `Audio touch action` to an `Audio encoder action`.                                                                                                               |
+| Type                         | Listbox | Capture, Render, Application                   | Capture and Render: lists all active devices. Application: lists all running apps currently emitting sound.                                                                                  |
+| Endpoint                     | Listbox | *                                              | Endpoint name. **Default communications** and **Default multimedia** are dynamic endpoints for Capture and Render type. **Foreground application** is dynamic endpoint for Application type. |
+| Toggle default endpoint mode | Listbox | None, Communication, Multimedia, Both          | The default mode to apply to the endpoint.                                                                                                                                                   |
+| Toggle default endpoint 1    | Listbox | *                                              | Default endpoint 1 name.                                                                                                                                                                     |
+| Toggle default endpoint 2    | Listbox | *                                              | Default endpoint 2 name.                                                                                                                                                                     |
+| Long-press action            | Listbox | None, Mute/Unmute all, Toggle default endpoint | Mute/Unmute all endpoint of this type (Capture, Render). Toggle the default one between endpoint 1 and endpoint 2.                                                                           |
 
 **`Touch screen`**
 
-| Gesture    | Description                                                                                                               |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Single tap | Select the endpoint for the channel defined in the configuration if Channel is not set to None, otherwise nothing.        |
-| Double tap | Mute/unmute endpoint defined in the configuration.                                                                        |
-| Long press | Mute/unmute all endpoint of this type (Capture, Render or Application) defined in the configuration.                      |
+| Gesture          | Description                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Single tap       | Select the endpoint for the channel defined in the configuration if Channel is not set to None, otherwise nothing.        |
+| Double tap       | Mute/Unmute endpoint defined in the configuration.                                                                        |
+| Long press       | Execute action defined in the configuration.                                                                              |
+| Horizontal swipe | If toggle default endpoint mode is Communication or Multimedia or Both, toggles endpoint 1 / endpoint 2.                  |
+| Vertical swipe   | Increases or decreases the volume by 10.                                                                                  |
 
 ### Audio encoder action [Adjustment with reset]
 
@@ -48,11 +54,15 @@ Displays volume and peak meter and allows volume control.
 
 **`Configuration`**
 
-| Parameter | Type    | Value                        | Description                                                                                                                                                                                  |
-| --------- | ------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Type      | Listbox | Capture, Render, Application | Capture and Render: lists all active devices. Application: lists all running apps currently emitting sound.                                                                                  |
-| Endpoint  | Listbox | *                            | Endpoint name. **Default communications** and **Default multimedia** are dynamic endpoints for Capture and Render type. **Foreground application** is dynamic endpoint for Application type. |
-| Channel   | Listbox | None, A, B, C                | Channel allows to bind this `Audio encoder action` to multiple `Audio touch action`.                                                                                                         |
+| Parameter                    | Type    | Value                                          | Description                                                                                                                                                                                  |
+| ---------------------------- | ------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Channel                      | Listbox | None, A, B, C                                  | Channel allows to bind this `Audio encoder action` to multiple `Audio touch action`.                                                                                                         |
+| Type                         | Listbox | Capture, Render, Application                   | Capture and Render: lists all active devices. Application: lists all running apps currently emitting sound.                                                                                  |
+| Endpoint                     | Listbox | *                                              | Endpoint name. **Default communications** and **Default multimedia** are dynamic endpoints for Capture and Render type. **Foreground application** is dynamic endpoint for Application type. |
+| Toggle default endpoint mode | Listbox | None, Communication, Multimedia, Both          | The default mode to apply to the endpoint.                                                                                                                                                   |
+| Toggle default endpoint 1    | Listbox | *                                              | Default endpoint 1 name.                                                                                                                                                                     |
+| Toggle default endpoint 2    | Listbox | *                                              | Default endpoint 2 name.                                                                                                                                                                     |
+| Long-press action            | Listbox | None, Mute/Unmute all, Toggle default endpoint | Mute/Unmute all endpoint of this type (Capture, Render). Toggle the default one between endpoint 1 and endpoint 2.                                                                           |
 
 **`Dial`**
 
@@ -60,6 +70,16 @@ Displays volume and peak meter and allows volume control.
 | ---------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Rotate     | Adjust volume of endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration. |
 | Push       | Mute/unmute endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration.      |
+
+**`Touch screen` of reset action**
+
+| Gesture          | Description                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Single tap       | Select the endpoint for the channel defined in the configuration if Channel is not set to None, otherwise nothing.        |
+| Double tap       | Mute/Unmute endpoint defined in the configuration.                                                                        |
+| Long press       | Execute action defined in the configuration.                                                                              |
+| Horizontal swipe | If toggle default endpoint mode is Communication or Multimedia or Both, toggles endpoint 1 / endpoint 2.                  |
+| Vertical swipe   | Increases or decreases the volume by 10.                                                                                  |
 
 ### Mute/unmute all capture devices [Command]
 
