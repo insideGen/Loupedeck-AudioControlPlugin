@@ -3,8 +3,7 @@
     using System;
 
     /// <summary>
-    /// The Role enumeration defines constants that indicate the role
-    /// that the system has assigned to an audio endpoint device.
+    /// The Role enumeration defines constants that indicate the role that the system has assigned to an audio endpoint device.
     /// </summary>
     /// <remarks><a href="https://learn.microsoft.com/en-us/windows/win32/api/mmdeviceapi/ne-mmdeviceapi-erole"></a></remarks>
     [Flags]

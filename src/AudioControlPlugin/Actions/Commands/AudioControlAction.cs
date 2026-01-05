@@ -417,7 +417,7 @@
             }
             catch (Exception ex)
             {
-                PluginLog.Error($"Failed to decode action parameters string.|{ex.Message}");
+                PluginLog.Warning($"Failed to decode action parameters string: {ex.Message}");
 
                 channel = ActionChannel.None;
                 type = EndpointType.Capture;
@@ -432,6 +432,19 @@
 
         private bool TryDecodeActionParameters(ActionEditorActionParameters actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction)
         {
+            channel = ActionChannel.None;
+            type = EndpointType.Capture;
+            endpointId = null;
+            toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
+            toggleDefaultEndpoint1Id = null;
+            toggleDefaultEndpoint2Id = null;
+            longPressAction = LongPressAction.None;
+
+            if (actionParameters == null)
+            {
+                return false;
+            }
+
             try
             {
                 string channelParam = actionParameters.Parameters.GetValue(ActionEditorControl.Channel.ToLower(), ActionChannel.None.ToLower());
@@ -453,18 +466,9 @@
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                PluginLog.Error("Failed to decode action parameters.");
-
-                channel = ActionChannel.None;
-                type = EndpointType.Capture;
-                endpointId = null;
-                toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
-                toggleDefaultEndpoint1Id = null;
-                toggleDefaultEndpoint2Id = null;
-                longPressAction = LongPressAction.None;
-
+                PluginLog.Warning($"Failed to decode action parameters: {ex.Message}");
                 return false;
             }
         }
@@ -576,6 +580,11 @@
 
         public bool ProcessButtonEvent2(ActionEditorActionParameters actionParameters, DeviceButtonEvent2 buttonEvent)
         {
+            if (actionParameters == null || buttonEvent == null)
+            {
+                return false;
+            }
+
             string actionParametersString = this.StringifyActionParameters(actionParameters);
             if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
@@ -590,7 +599,7 @@
                     }
                     else if (channel == ActionChannel.A)
                     {
-                        if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
+                        if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                         {
                             if (AudioControl.TryGetAudioControl(endpointIdA, out IAudioControl audioControlA))
                             {
@@ -600,7 +609,7 @@
                     }
                     else if (channel == ActionChannel.B)
                     {
-                        if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
+                        if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                         {
                             if (AudioControl.TryGetAudioControl(endpointIdB, out IAudioControl audioControlB))
                             {
@@ -610,7 +619,7 @@
                     }
                     else if (channel == ActionChannel.C)
                     {
-                        if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
+                        if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                         {
                             if (AudioControl.TryGetAudioControl(endpointIdC, out IAudioControl audioControlC))
                             {
@@ -625,6 +634,11 @@
 
         public bool ProcessTouchEvent(ActionEditorActionParameters actionParameters, DeviceTouchEvent touchEvent)
         {
+            if (actionParameters == null || touchEvent == null)
+            {
+                return false;
+            }
+
             string actionParametersString = this.StringifyActionParameters(actionParameters);
             if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
@@ -716,7 +730,7 @@
                                 }
                             }
                         }
-                        else if(touchEvent.DeltaY != 0)
+                        else if (touchEvent.DeltaY != 0)
                         {
                             AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
                         }
@@ -726,8 +740,13 @@
             return true;
         }
 
-        public bool ProcessEncoderEvent(ActionEditorActionParameters actionParameters, DeviceEncoderEvent encoderEvent)
+        public bool ApplyAdjustment(ActionEditorActionParameters actionParameters, int diff)
         {
+            if (actionParameters == null)
+            {
+                return false;
+            }
+
             string actionParametersString = this.StringifyActionParameters(actionParameters);
             if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
@@ -735,41 +754,49 @@
                 {
                     if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
                     {
-                        AudioControl.SetRelativeVolume(audioControl, encoderEvent.Clicks);
+                        AudioControl.SetRelativeVolume(audioControl, diff);
                     }
                 }
                 else if (channel == ActionChannel.A)
                 {
-                    if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
+                    if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                     {
                         if (AudioControl.TryGetAudioControl(endpointIdA, out IAudioControl audioControlA))
                         {
-                            AudioControl.SetRelativeVolume(audioControlA, encoderEvent.Clicks);
+                            AudioControl.SetRelativeVolume(audioControlA, diff);
                         }
                     }
                 }
                 else if (channel == ActionChannel.B)
                 {
-                    if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
+                    if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                     {
                         if (AudioControl.TryGetAudioControl(endpointIdB, out IAudioControl audioControlB))
                         {
-                            AudioControl.SetRelativeVolume(audioControlB, encoderEvent.Clicks);
+                            AudioControl.SetRelativeVolume(audioControlB, diff);
                         }
                     }
                 }
                 else if (channel == ActionChannel.C)
                 {
-                    if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
+                    if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                     {
                         if (AudioControl.TryGetAudioControl(endpointIdC, out IAudioControl audioControlC))
                         {
-                            AudioControl.SetRelativeVolume(audioControlC, encoderEvent.Clicks);
+                            AudioControl.SetRelativeVolume(audioControlC, diff);
                         }
                     }
                 }
+
+                this.Parent.AdjustmentValueChanged();
             }
+
             return true;
+        }
+
+        public bool ProcessEncoderEvent(ActionEditorActionParameters actionParameters, DeviceEncoderEvent encoderEvent)
+        {
+            return this.ApplyAdjustment(actionParameters, encoderEvent.Clicks);
         }
     }
 }

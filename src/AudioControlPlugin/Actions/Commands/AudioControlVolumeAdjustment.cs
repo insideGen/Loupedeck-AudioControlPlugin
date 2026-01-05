@@ -36,6 +36,8 @@
 
         protected override BitmapImage GetAdjustmentImage(ActionEditorActionParameters actionParameters, int imageWidth, int imageHeight) => this.Action.GetImage(actionParameters, imageWidth, imageHeight);
 
+        protected override bool ApplyAdjustment(ActionEditorActionParameters actionParameters, int diff) => this.Action.ApplyAdjustment(actionParameters, diff);
+
         protected override bool ProcessEncoderEvent(ActionEditorActionParameters actionParameters, DeviceEncoderEvent encoderEvent) => this.Action.ProcessEncoderEvent(actionParameters, encoderEvent);
 
         public new void ActionImageChanged() => base.ActionImageChanged();
