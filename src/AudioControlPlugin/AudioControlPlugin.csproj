@@ -17,7 +17,7 @@
 
     <PluginDir Condition="$(OS) == 'Windows_NT'">$(LocalAppData)\Logi\LogiPluginService\Plugins\</PluginDir>
     <PluginDir Condition="$(OS) != 'Windows_NT'">~/Library/Application\ Support/Logi/LogiPluginService/Plugins/</PluginDir>
-    <Version>$(VersionPrefix)2.1.0</Version>
+    <Version>$(VersionPrefix)2.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

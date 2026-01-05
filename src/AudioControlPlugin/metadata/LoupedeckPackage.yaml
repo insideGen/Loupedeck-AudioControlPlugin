@@ -18,13 +18,13 @@ description: "Control Windows audio from your Loupedeck: volume adjusment, mute/
 pluginFileName: AudioControlPlugin.dll
 
 # Plugin version.
-version: 2.1.0
+version: 2.1.1
 
 # Author of the plugin. The author can be a company or an individual developer.
 author: insideGen
 
 # Copyright information.
-copyright: Copyright © 2025 . All rights reserved.
+copyright: Copyright © 2026 . All rights reserved.
 
 
 # ==================================================================================================
@@ -43,7 +43,7 @@ pluginFolderWin: .
 supportedDevices:
     # LoupedeckCtFamily covers the following devices: Loupedeck CT, Live and Live S,
     # Razer Stream Controller, and Razer Stream Controller X.
-    - LoupedeckCtFamily
+    - LoupedeckLiveS
 
     # LoupedeckPlusFamily covers Loupedeck+ device. Uncomment the following line to support Loupedeck+.
     #- LoupedeckPlusFamily
