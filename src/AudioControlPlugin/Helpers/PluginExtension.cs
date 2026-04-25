@@ -24,15 +24,30 @@
             return color;
         }
 
+        public static Bitmap ToNonIndexed(this Bitmap bitmap)
+        {
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+            {
+                return bitmap;
+            }
+            Bitmap converted = new Bitmap(bitmap.Width, bitmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            using (Graphics g = Graphics.FromImage(converted))
+            {
+                g.DrawImage(bitmap, 0, 0, bitmap.Width, bitmap.Height);
+            }
+            bitmap.Dispose();
+            return converted;
+        }
+
         public static Bitmap BlueLightFilter(this Bitmap bitmap)
         {
             if (PluginSettings.BlueLightFilterEnabled)
             {
+                bitmap = bitmap.ToNonIndexed();
                 for (int y = 0; y < bitmap.Height; y++)
                 {
                     for (int x = 0; x < bitmap.Width; x++)
                     {
-
                         Color oldColor = bitmap.GetPixel(x, y);
                         Color newColor = oldColor.BlueLightFilter();
                         bitmap.SetPixel(x, y, newColor);
@@ -44,6 +59,7 @@
 
         public static Bitmap Recolor(this Bitmap bitmap, Color newColor)
         {
+            bitmap = bitmap.ToNonIndexed();
             for (int y = 0; y < bitmap.Height; y++)
             {
                 for (int x = 0; x < bitmap.Width; x++)

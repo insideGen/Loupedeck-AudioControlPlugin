@@ -258,6 +258,10 @@
                     User32.DestroyIcon(large);
                     User32.DestroyIcon(small);
                 }
+                else if (File.Exists(path))
+                {
+                    iconBitmap = new Bitmap(path).ToNonIndexed().BlueLightFilter();
+                }
                 //else
                 //{
                 //    System.Windows.Media.Imaging.BitmapSource imageSource = null;

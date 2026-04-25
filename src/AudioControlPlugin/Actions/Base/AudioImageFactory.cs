@@ -25,9 +25,7 @@
         private readonly Brush greyBrush;
         private readonly Brush orangeBrush;
         private readonly Brush redBrush;
-        private readonly StringFormat lFormat;
         private readonly StringFormat cFormat;
-        private readonly StringFormat rFormat;
 
         public AudioImageFactory()
         {
@@ -47,9 +45,7 @@
             this.greyBrush = new SolidBrush(Color.FromArgb(120, Color.White.BlueLightFilter()));
             this.orangeBrush = new SolidBrush(Color.Orange);
             this.redBrush = new SolidBrush(Color.FromArgb(255, Color.Red));
-            this.lFormat = new StringFormat() { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center };
             this.cFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-            this.rFormat = new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center };
         }
 
         private static int GraduationRound(int max, float ratio)
@@ -94,9 +90,30 @@
             return icon;
         }
 
+        private static Image ScaleIcon(Image icon, int maxWidth, int maxHeight)
+        {
+            if (icon == null || (icon.Width <= maxWidth && icon.Height <= maxHeight))
+            {
+                return icon;
+            }
+            float scale = Math.Min((float)maxWidth / icon.Width, (float)maxHeight / icon.Height);
+            int newWidth = (int)(icon.Width * scale);
+            int newHeight = (int)(icon.Height * scale);
+            Bitmap scaled = new Bitmap(newWidth, newHeight);
+            using (Graphics g = Graphics.FromImage(scaled))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(icon, 0, 0, newWidth, newHeight);
+            }
+            icon.Dispose();
+            return scaled;
+        }
+
         private Bitmap DrawWidth50(AudioImageData audioData, Image icon)
         {
             this.graphicsWidth50.Clear(audioData.Highlighted ? Color.FromArgb(45, 45, 45) : Color.Black);
+
+            icon = ScaleIcon(icon, 32, 32);
 
             if (icon != null)
             {
@@ -145,9 +162,12 @@
 
             this.graphicsWidth80.DrawString(audioData.DisplayName, this.calibri10Font, this.whiteBrush, new Rectangle(0, 6, 80, 12), this.cFormat);
 
+            icon = ScaleIcon(icon, 32, 32);
             if (icon != null)
             {
-                this.graphicsWidth80.DrawImage(icon, 24, 22, icon.Width, icon.Height);
+                int iconX = (this.imageWidth80.Width - icon.Width) / 2;
+                int iconY = 22 + (32 - icon.Height) / 2;
+                this.graphicsWidth80.DrawImage(icon, iconX, iconY, icon.Width, icon.Height);
             }
 
             if (audioData.IsActive)
