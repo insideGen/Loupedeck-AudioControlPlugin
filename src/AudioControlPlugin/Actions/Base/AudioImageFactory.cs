@@ -105,7 +105,6 @@
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(icon, 0, 0, newWidth, newHeight);
             }
-            icon.Dispose();
             return scaled;
         }
 

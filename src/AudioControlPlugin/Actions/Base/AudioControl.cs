@@ -13,7 +13,7 @@
 
         private static MMAudio CreateMMAudio()
         {
-            var mmAudio = new MMAudio();
+            MMAudio mmAudio = new MMAudio();
             mmAudio.SessionLoadError += (sender, ex) => PluginLog.Error(ex, $"[AudioSessionCollection] Failed to load audio session: {ex.Message}");
             return mmAudio;
         }
@@ -51,7 +51,12 @@
                 {
                     IEnumerable<IAudioControlSession> sessions = AudioControl.MMAudio.RenderSessions.Where(x => x.IsSystemSoundsSession == true || x.State != AudioSessionState.Expired).OrderByDescending(x => x.State);
                     AudioSessionInstanceIdentifier asii = AudioSessionInstanceIdentifier.FromString(endpointId);
-                    if (asii.ExeId == null && !asii.ExeId.Contains(Guid.Empty.ToString()) && asii.ProcessId == -1)
+                    if (asii == null)
+                    {
+                        audioControl = null;
+                        return false;
+                    }
+                    if (asii.ExeId != null && !asii.ExeId.Contains(Guid.Empty.ToString()) && asii.ProcessId == -1)
                     {
                         if (sessions.FirstOrDefault(x => x.DeviceId == asii.DeviceId && x.ExeId == asii.ExeId) is IAudioControlSession session1)
                         {
@@ -59,7 +64,7 @@
                             return true;
                         }
                     }
-                    if(!asii.ExeId.Contains(Guid.Empty.ToString()))
+                    if (asii.ExeId != null && !asii.ExeId.Contains(Guid.Empty.ToString()))
                     {
                         if (sessions.FirstOrDefault(x => x.ExeId == asii.ExeId) is IAudioControlSession session1)
                         {
@@ -79,7 +84,7 @@
                             audioControl = session3;
                             return true;
                         }
-                        if(sessions.FirstOrDefault(x => x.ProcessId == asii.ProcessId) is IAudioControlSession session4)
+                        if (sessions.FirstOrDefault(x => x.ProcessId == asii.ProcessId) is IAudioControlSession session4)
                         {
                             audioControl = session4;
                             return true;
