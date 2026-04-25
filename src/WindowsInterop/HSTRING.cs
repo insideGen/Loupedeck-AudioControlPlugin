@@ -4,14 +4,14 @@
     using System.Runtime.InteropServices;
     using System.Security;
 
-    using WinRT;
+    using WindowsInterop.Win32;
 
     [StructLayout(LayoutKind.Sequential), SecuritySafeCritical]
     public readonly struct HSTRING : IEquatable<HSTRING>, IDisposable
     {
         readonly IntPtr handle;
 
-        public static HSTRING FromString(string str) => new HSTRING(MarshalString.FromManaged(str));
+        public static HSTRING FromString(string str) => new HSTRING(WindowsRuntimeString.FromManaged(str));
 
         public static implicit operator IntPtr(HSTRING h)
         {
@@ -35,12 +35,12 @@
 
         public void Delete()
         {
-            MarshalString.DisposeAbi(this.handle);
+            WindowsRuntimeString.DisposeAbi(this.handle);
         }
 
         public override string ToString()
         {
-            return MarshalString.FromAbi(this.handle);
+            return WindowsRuntimeString.FromAbi(this.handle);
         }
 
         public void Dispose()
