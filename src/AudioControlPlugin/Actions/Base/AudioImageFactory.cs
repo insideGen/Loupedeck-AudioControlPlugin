@@ -78,7 +78,7 @@
             Bitmap icon = null;
             if (!string.IsNullOrEmpty(iconPath))
             {
-                icon = PluginImage.GetIcon(iconPath);
+                icon = PluginImage.GetIcon(iconPath).Scale(32, 32);
                 if (icon != null)
                 {
                     using (Graphics graphics = Graphics.FromImage(icon))
@@ -90,29 +90,9 @@
             return icon;
         }
 
-        private static Image ScaleIcon(Image icon, int maxWidth, int maxHeight)
-        {
-            if (icon == null || (icon.Width <= maxWidth && icon.Height <= maxHeight))
-            {
-                return icon;
-            }
-            float scale = Math.Min((float)maxWidth / icon.Width, (float)maxHeight / icon.Height);
-            int newWidth = (int)(icon.Width * scale);
-            int newHeight = (int)(icon.Height * scale);
-            Bitmap scaled = new Bitmap(newWidth, newHeight);
-            using (Graphics g = Graphics.FromImage(scaled))
-            {
-                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                g.DrawImage(icon, 0, 0, newWidth, newHeight);
-            }
-            return scaled;
-        }
-
         private Bitmap DrawWidth50(AudioImageData audioData, Image icon)
         {
             this.graphicsWidth50.Clear(audioData.Highlighted ? Color.FromArgb(45, 45, 45) : Color.Black);
-
-            icon = ScaleIcon(icon, 32, 32);
 
             if (icon != null)
             {
@@ -161,7 +141,6 @@
 
             this.graphicsWidth80.DrawString(audioData.DisplayName, this.calibri10Font, this.whiteBrush, new Rectangle(0, 6, 80, 12), this.cFormat);
 
-            icon = ScaleIcon(icon, 32, 32);
             if (icon != null)
             {
                 int iconX = (this.imageWidth80.Width - icon.Width) / 2;
@@ -205,12 +184,12 @@
                 }
                 else
                 {
-                    icon = this.iconsDictionary.GetOrAdd($"{audioData.MutedIconPath}+muted", (key) => PluginImage.GetIcon(audioData.MutedIconPath));
+                    icon = this.iconsDictionary.GetOrAdd($"{audioData.MutedIconPath}+muted", (key) => PluginImage.GetIcon(audioData.MutedIconPath).Scale(32, 32));
                 }
             }
             else
             {
-                icon = this.iconsDictionary.GetOrAdd($"{audioData.UnmutedIconPath}+unmuted", (key) => PluginImage.GetIcon(audioData.UnmutedIconPath));
+                icon = this.iconsDictionary.GetOrAdd($"{audioData.UnmutedIconPath}+unmuted", (key) => PluginImage.GetIcon(audioData.UnmutedIconPath).Scale(32, 32));
             }
             if (imageSize == PluginImageSize.Width60)
             {

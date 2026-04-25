@@ -2,6 +2,7 @@
 {
     using System;
     using System.Drawing;
+    using System.Drawing.Drawing2D;
 
     internal static class PluginExtension
     {
@@ -72,6 +73,25 @@
                 }
             }
             return bitmap;
+        }
+
+        public static Bitmap Scale(this Bitmap bitmap, int maxWidth, int maxHeight)
+        {
+            if (bitmap == null || (bitmap.Width <= maxWidth && bitmap.Height <= maxHeight))
+            {
+                return bitmap;
+            }
+            float scale = Math.Min((float)maxWidth / bitmap.Width, (float)maxHeight / bitmap.Height);
+            int newWidth = (int)(bitmap.Width * scale);
+            int newHeight = (int)(bitmap.Height * scale);
+            Bitmap scaled = new Bitmap(newWidth, newHeight);
+            using (Graphics g = Graphics.FromImage(scaled))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(bitmap, 0, 0, newWidth, newHeight);
+            }
+            bitmap.Dispose();
+            return scaled;
         }
 
         public static string ToLower(this Enum enumValue)
