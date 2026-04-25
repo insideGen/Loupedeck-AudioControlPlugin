@@ -24,7 +24,7 @@ version: 2.1.2
 author: insideGen
 
 # Copyright information.
-copyright: Copyright © 2026 . All rights reserved.
+copyright: Copyright © 2026 insideGen. All rights reserved.
 
 
 # ==================================================================================================
@@ -33,17 +33,17 @@ copyright: Copyright © 2026 . All rights reserved.
 
 # Location of plugin files on Windows (relative to the plugin base directory).
 # This parameter is required to support Windows.
-pluginFolderWin: .
+pluginFolderWin: bin
 
 # Location of plugin files on macOS (relative to the plugin base directory).
 # This parameter is required to support Mac.
-#pluginFolderMac: .
+#pluginFolderMac: bin
 
 # List of devices the plugin is optimized for.
 supportedDevices:
     # LoupedeckCtFamily covers the following devices: Loupedeck CT, Live and Live S,
     # Razer Stream Controller, and Razer Stream Controller X.
-    - LoupedeckLiveS
+    - LoupedeckCtFamily
 
     # LoupedeckPlusFamily covers Loupedeck+ device. Uncomment the following line to support Loupedeck+.
     #- LoupedeckPlusFamily
