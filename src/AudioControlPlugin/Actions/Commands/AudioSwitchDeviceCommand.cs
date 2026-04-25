@@ -4,15 +4,12 @@ namespace Loupedeck.AudioControlPlugin
     using System.Collections.Concurrent;
     using System.Data;
     using System.Linq;
-    using System.Timers;
 
-    using WindowsInterop;
     using WindowsInterop.CoreAudio;
-    using WindowsInterop.Win32;
 
-    internal class AudioSwitchDeviceCommand : ActionEditorCommand
+    internal abstract class AudioSwitchDeviceCommand : ActionEditorCommand
     {
-        
+
         public const string DEVICE = "device";
         public const string TYPE = "type";
 
@@ -22,8 +19,8 @@ namespace Loupedeck.AudioControlPlugin
         {
             base.DisplayName = "Audio switch device";
             base.Description = "Select and switch the default audio render device.";
-            base.GroupName   = "";
-            base.IsWidget    = true;
+            base.GroupName = "";
+            base.IsWidget = true;
 
             base.ActionEditor.AddControlEx(new ActionEditorListbox(name: DEVICE, labelText: "Select Audio Device"));
             base.ActionEditor.AddControlEx(new ActionEditorListbox(name: TYPE, labelText: "Select Type"));
@@ -34,8 +31,8 @@ namespace Loupedeck.AudioControlPlugin
 
         protected override bool RunCommand(ActionEditorActionParameters actionParameters)
         {
-            if(actionParameters.TryGetString(DEVICE, out var deviceId) &&
-                actionParameters.TryGetString(TYPE, out var typeName))
+            if (actionParameters.TryGetString(DEVICE, out string deviceId) &&
+                actionParameters.TryGetString(TYPE, out string typeName))
             {
                 var device = AudioControl.MMAudio.RenderDevices.FirstOrDefault(x => x.Id == deviceId);
                 if (device != null)
