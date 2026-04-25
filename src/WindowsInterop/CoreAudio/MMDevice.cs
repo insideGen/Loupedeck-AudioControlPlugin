@@ -9,6 +9,7 @@
     public class MMDevice : IAudioControlDevice, IDisposable
     {
         public event EventHandler<string> PropertyChanged;
+        public event EventHandler<Exception> SessionLoadError;
 
         private readonly IMMDevice deviceComObj;
 
@@ -89,6 +90,7 @@
                     {
                         Marshal.ThrowExceptionForHR(this.deviceComObj.Activate(typeof(IAudioSessionManager).GUID, ClsCtx.ALL, IntPtr.Zero, out object audioSessionManager));
                         this._audioSessionManager = new AudioSessionManager(audioSessionManager as IAudioSessionManager);
+                        this._audioSessionManager.SessionLoadError += (s, ex) => this.SessionLoadError?.Invoke(s, ex);
                     }
                     catch
                     {

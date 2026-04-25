@@ -10,6 +10,7 @@
         public event EventHandler<AudioSessionControl> SessionCreated;
         public event EventHandler<AudioSessionControl> SessionDisconnected;
         public event EventHandler<AudioSessionState> StateChanged;
+        public event EventHandler<Exception> SessionLoadError;
 
         private readonly IAudioSessionManager2 audioSessionManagerComObject;
         private readonly AudioSessionNotification audioSessionNotification;
@@ -22,7 +23,9 @@
             try
             {
                 Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.GetSessionEnumerator(out IAudioSessionEnumerator sessionEnumeratorComObject));
-                this.Sessions = new ObservableCollection<AudioSessionControl>(new AudioSessionCollection(sessionEnumeratorComObject));
+                AudioSessionCollection sessionCollection = new AudioSessionCollection(sessionEnumeratorComObject);
+                sessionCollection.SessionLoadError += this.OnSessionLoadError;
+                this.Sessions = new ObservableCollection<AudioSessionControl>(sessionCollection);
                 foreach (AudioSessionControl session in this.Sessions)
                 {
                     session.StateChanged += this.OnStateChanged;
@@ -65,6 +68,11 @@
             this.SessionDisconnected?.Invoke(sender, disconnectedSession);
             this.Sessions.Remove(disconnectedSession);
             disconnectedSession.Dispose();
+        }
+
+        private void OnSessionLoadError(object sender, Exception ex)
+        {
+            this.SessionLoadError?.Invoke(sender, ex);
         }
 
         public void Dispose()

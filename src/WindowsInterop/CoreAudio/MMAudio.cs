@@ -15,6 +15,7 @@
         public event EventHandler<DeviceStateEventArgs> DeviceStateChanged;
         public event EventHandler<string> DevicePropertyChanged;
         public event EventHandler<AudioSessionState> SessionStateChanged;
+        public event EventHandler<Exception> SessionLoadError;
 
         public AudioPolicyConfig AudioPolicyConfig { get; }
 
@@ -25,7 +26,8 @@
 
         public ObservableCollection<MMDevice> Devices { get; }
 
-        public IEnumerable<MMDevice> CaptureDevices {
+        public IEnumerable<MMDevice> CaptureDevices
+        {
             get
             {
                 return this.Devices.Where(x => x.DataFlow == DataFlow.Capture);
@@ -44,7 +46,10 @@
         {
             get
             {
-                return this.RenderDevices.Where(x => x.State == DeviceState.Active).SelectMany(x => x.AudioSessionManager.Sessions);
+                return this.RenderDevices
+                    .Where(x => x.State == DeviceState.Active)
+                    .Where(x => x.AudioSessionManager?.Sessions != null)
+                    .SelectMany(x => x.AudioSessionManager.Sessions);
             }
         }
 
@@ -89,6 +94,7 @@
                 if (device.AudioSessionManager != null)
                 {
                     device.AudioSessionManager.SessionCreated += this.OnDeviceSessionCreated;
+                    device.SessionLoadError += (s, ex) => this.SessionLoadError?.Invoke(s, ex);
                     if (device.AudioSessionManager.Sessions != null)
                     {
                         foreach (AudioSessionControl session in device.AudioSessionManager.Sessions)
@@ -180,7 +186,7 @@
             }
             this.DeviceStateChanged?.Invoke(this, e);
         }
-        
+
         private void OnDevicePropertyChanged(object sender, PropertyValueEventArgs e)
         {
             if (this.Devices.FirstOrDefault(x => x.Id == e.DeviceId) is MMDevice device)

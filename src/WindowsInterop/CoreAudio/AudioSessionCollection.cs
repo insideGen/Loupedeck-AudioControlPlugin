@@ -7,6 +7,8 @@
 
     public class AudioSessionCollection : IEnumerable<AudioSessionControl>, IDisposable
     {
+        public event EventHandler<Exception> SessionLoadError;
+
         private readonly IAudioSessionEnumerator audioSessionEnumerator;
 
         public int Count
@@ -37,7 +39,20 @@
             int count = this.Count;
             for (int index = 0; index < count; index++)
             {
-                yield return this[index];
+                AudioSessionControl session = null;
+                try
+                {
+                    session = this[index];
+                }
+                catch (Exception ex)
+                {
+                    // Skip sessions that fail to initialize (e.g. access denied, sandboxed UWP processes)
+                    SessionLoadError?.Invoke(this, ex);
+                }
+                if (session != null)
+                {
+                    yield return session;
+                }
             }
         }
 

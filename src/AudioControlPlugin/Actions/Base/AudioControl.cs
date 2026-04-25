@@ -9,7 +9,14 @@
 
     internal static class AudioControl
     {
-        public static MMAudio MMAudio { get; } = new MMAudio();
+        public static MMAudio MMAudio { get; } = CreateMMAudio();
+
+        private static MMAudio CreateMMAudio()
+        {
+            var mmAudio = new MMAudio();
+            mmAudio.SessionLoadError += (sender, ex) => PluginLog.Error(ex, $"[AudioSessionCollection] Failed to load audio session: {ex.Message}");
+            return mmAudio;
+        }
 
         public enum EndpointType
         {
