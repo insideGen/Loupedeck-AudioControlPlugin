@@ -55,17 +55,49 @@
                 }
                 if (AppxPackage.IsPackagedProcess(hProcess))
                 {
-                    if (appInfo == null)
-                    {
-                        appInfo = new AppInfo();
-                    }
+                    appInfo ??= new AppInfo();
+
                     AppxPackage appxPackage = AppxPackage.FromProcess(hProcess);
-                    appInfo.ExePath = appxPackage.Path;
-                    if (!appxPackage.DisplayName.StartsWith("ms-resource:"))
+                    // Preserve exe path from QueryFullProcessImageName; fall back to package path if unavailable
+                    if (string.IsNullOrEmpty(appInfo.ExePath))
                     {
-                        appInfo.DisplayName = appxPackage.DisplayName;
+                        appInfo.ExePath = appxPackage.Path;
                     }
-                    appInfo.LogoPath = appxPackage.ApplicationUserModelId;
+
+                    string displayName = appxPackage.DisplayName;
+                    if (!string.IsNullOrEmpty(displayName) && displayName.StartsWith("ms-resource:"))
+                    {
+                        displayName = AppxPackage.LoadResourceString(appxPackage.FullName, displayName);
+                    }
+                    if (!string.IsNullOrEmpty(displayName))
+                    {
+                        appInfo.DisplayName = displayName;
+                    }
+
+                    string logoPath = null;
+
+                    // Find the app whose executable matches, to get its icon (like Windows does)
+                    string exeFileName = !string.IsNullOrEmpty(appInfo.ExePath) ? Path.GetFileName(appInfo.ExePath) : null;
+                    AppxApp matchingApp = appxPackage.Apps.FirstOrDefault(a => !string.IsNullOrEmpty(a.Executable) && string.Equals(Path.GetFileName(a.Executable), exeFileName, StringComparison.OrdinalIgnoreCase));
+                    matchingApp ??= appxPackage.Apps.FirstOrDefault();
+
+                    // Prefer Square44x44Logo (same as Windows taskbar/volume mixer), fall back to package Logo
+                    string relativeLogo = matchingApp?.Square44x44Logo ?? matchingApp?.Logo ?? appxPackage.Logo;
+
+                    if (!string.IsNullOrEmpty(relativeLogo) && !string.IsNullOrEmpty(appxPackage.Path))
+                    {
+                        // Try lightunplated variant first (contains real app colors, not white-on-transparent)
+                        logoPath = appxPackage.FindLightUnplatedVariant(relativeLogo) ?? appxPackage.FindHighestScaleQualifiedImagePath(relativeLogo);
+                        if (string.IsNullOrEmpty(logoPath))
+                        {
+                            string fullLogo = Path.Combine(appxPackage.Path, relativeLogo);
+                            if (File.Exists(fullLogo))
+                            {
+                                logoPath = fullLogo;
+                            }
+                        }
+                    }
+                    appInfo.LogoPath = logoPath ?? appxPackage.ApplicationUserModelId;
                 }
                 if (appInfo != null)
                 {

@@ -115,7 +115,7 @@
             }
 
             Marshal.ThrowExceptionForHR(this.audioSessionControlInterface.GetIconPath(out string iconPath));
-            if (iconPath.StartsWith("@"))
+            if (!string.IsNullOrEmpty(iconPath) && iconPath.StartsWith("@"))
             {
                 this._iconPath = Environment.ExpandEnvironmentVariables(iconPath.TrimStart('@'));
             }
@@ -131,11 +131,28 @@
                 this.ProcessId = 0;
                 this._exePath = this.ASII.ExePath;
             }
-            else if (AppInfo.FromProcess(this.ProcessId) is AppInfo appInfo)
+            else
             {
-                this._displayName = appInfo.DisplayName;
-                this._iconPath = appInfo.LogoPath;
-                this._exePath = appInfo.ExePath;
+                AppInfo appInfo = this.ProcessId > 0 ? AppInfo.FromProcess(this.ProcessId) : null;
+                if (appInfo != null)
+                {
+                    this._displayName = appInfo.DisplayName;
+                    this._iconPath = appInfo.LogoPath;
+                    this._exePath = appInfo.ExePath;
+                }
+                else
+                {
+                    // Fallback for sandboxed/protected processes (e.g. UWP Store apps)
+                    // Use the exe path from the session identifier if available
+                    if (string.IsNullOrEmpty(this._exePath))
+                    {
+                        this._exePath = this.ASII.ExePath ?? this.ASI.ExePath;
+                    }
+                    if (string.IsNullOrEmpty(this._displayName) && !string.IsNullOrEmpty(this._exePath))
+                    {
+                        this._displayName = Path.GetFileNameWithoutExtension(this._exePath);
+                    }
+                }
             }
         }
 

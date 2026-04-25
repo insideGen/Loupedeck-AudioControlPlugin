@@ -22,23 +22,25 @@
             return AppxPackage.GetStringValue(this._app, name);
         }
 
+        public string BackgroundColor { get; internal set; }
         public string Description { get; internal set; }
         public string DisplayName { get; internal set; }
         public string EntryPoint { get; internal set; }
         public string Executable { get; internal set; }
+        public string ForegroundText { get; internal set; }
         public string Id { get; internal set; }
         public string Logo { get; internal set; }
-        public string SmallLogo { get; internal set; }
-        public string StartPage { get; internal set; }
-        public string Square150x150Logo { get; internal set; }
-        public string Square30x30Logo { get; internal set; }
-        public string BackgroundColor { get; internal set; }
-        public string ForegroundText { get; internal set; }
-        public string WideLogo { get; internal set; }
-        public string Wide310x310Logo { get; internal set; }
-        public string ShortName { get; internal set; }
-        public string Square310x310Logo { get; internal set; }
-        public string Square70x70Logo { get; internal set; }
         public string MinWidth { get; internal set; }
+        public string ShortName { get; internal set; }
+        public string SmallLogo { get; internal set; }
+        public string Square30x30Logo { get; internal set; }
+        public string Square44x44Logo { get; internal set; }
+        public string Square70x70Logo { get; internal set; }
+        public string Square71x71Logo { get; internal set; }
+        public string Square150x150Logo { get; internal set; }
+        public string Square310x310Logo { get; internal set; }
+        public string StartPage { get; internal set; }
+        public string Wide310x310Logo { get; internal set; }
+        public string WideLogo { get; internal set; }
     }
 }

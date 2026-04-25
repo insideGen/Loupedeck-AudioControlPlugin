@@ -51,6 +51,39 @@
             }
         }
 
+        public string FindLightUnplatedVariant(string resourceName)
+        {
+            if (resourceName == null)
+            {
+                return null;
+            }
+
+            string name = System.IO.Path.GetFileNameWithoutExtension(resourceName);
+            string ext = System.IO.Path.GetExtension(resourceName);
+            string dir = System.IO.Path.Combine(this.Path, System.IO.Path.GetDirectoryName(resourceName));
+
+            // Preferred sizes in descending order
+            int[] targetSizes = { 96, 80, 72, 64, 48, 44, 40, 36, 32, 30, 24, 20, 16 };
+            try
+            {
+                foreach (int size in targetSizes)
+                {
+                    string candidate = System.IO.Path.Combine(dir, $"{name}.targetsize-{size}_altform-lightunplated{ext}");
+                    if (System.IO.File.Exists(candidate))
+                    {
+                        return candidate;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+            }
+            catch (UnauthorizedAccessException)
+            {
+            }
+            return null;
+        }
+
         public string FindHighestScaleQualifiedImagePath(string resourceName)
         {
             if (resourceName == null)
@@ -62,7 +95,16 @@
             List<int> sizes = new List<int>();
             string name = System.IO.Path.GetFileNameWithoutExtension(resourceName);
             string ext = System.IO.Path.GetExtension(resourceName);
-            foreach (string file in Directory.EnumerateFiles(System.IO.Path.Combine(this.Path, System.IO.Path.GetDirectoryName(resourceName)), name + scaleToken + "*" + ext))
+            IEnumerable<string> logoFiles;
+            try
+            {
+                logoFiles = Directory.EnumerateFiles(System.IO.Path.Combine(this.Path, System.IO.Path.GetDirectoryName(resourceName)), name + scaleToken + "*" + ext);
+            }
+            catch
+            {
+                return null;
+            }
+            foreach (string file in logoFiles)
             {
                 string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
                 int pos = fileName.IndexOf(scaleToken) + scaleToken.Length;
@@ -234,24 +276,26 @@
                                 {
                                     IAppxManifestApplication app = apps.GetCurrent();
                                     AppxApp appx = new AppxApp(app);
+                                    appx.BackgroundColor = GetStringValue(app, "BackgroundColor");
                                     appx.Description = GetStringValue(app, "Description");
                                     appx.DisplayName = GetStringValue(app, "DisplayName");
                                     appx.EntryPoint = GetStringValue(app, "EntryPoint");
                                     appx.Executable = GetStringValue(app, "Executable");
+                                    appx.ForegroundText = GetStringValue(app, "ForegroundText");
                                     appx.Id = GetStringValue(app, "Id");
                                     appx.Logo = GetStringValue(app, "Logo");
-                                    appx.SmallLogo = GetStringValue(app, "SmallLogo");
-                                    appx.StartPage = GetStringValue(app, "StartPage");
-                                    appx.Square150x150Logo = GetStringValue(app, "Square150x150Logo");
-                                    appx.Square30x30Logo = GetStringValue(app, "Square30x30Logo");
-                                    appx.BackgroundColor = GetStringValue(app, "BackgroundColor");
-                                    appx.ForegroundText = GetStringValue(app, "ForegroundText");
-                                    appx.WideLogo = GetStringValue(app, "WideLogo");
-                                    appx.Wide310x310Logo = GetStringValue(app, "Wide310x310Logo");
-                                    appx.ShortName = GetStringValue(app, "ShortName");
-                                    appx.Square310x310Logo = GetStringValue(app, "Square310x310Logo");
-                                    appx.Square70x70Logo = GetStringValue(app, "Square70x70Logo");
                                     appx.MinWidth = GetStringValue(app, "MinWidth");
+                                    appx.ShortName = GetStringValue(app, "ShortName");
+                                    appx.SmallLogo = GetStringValue(app, "SmallLogo");
+                                    appx.Square30x30Logo = GetStringValue(app, "Square30x30Logo");
+                                    appx.Square44x44Logo = GetStringValue(app, "Square44x44Logo");
+                                    appx.Square70x70Logo = GetStringValue(app, "Square70x70Logo");
+                                    appx.Square71x71Logo = GetStringValue(app, "Square71x71Logo");
+                                    appx.Square150x150Logo = GetStringValue(app, "Square150x150Logo");
+                                    appx.Square310x310Logo = GetStringValue(app, "Square310x310Logo");
+                                    appx.StartPage = GetStringValue(app, "StartPage");
+                                    appx.Wide310x310Logo = GetStringValue(app, "Wide310x310Logo");
+                                    appx.WideLogo = GetStringValue(app, "WideLogo");
                                     package._apps.Add(appx);
                                     apps.MoveNext();
                                 }
