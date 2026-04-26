@@ -71,7 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="10.0.7" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.7" ExcludeAssets="runtime" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,6 +81,7 @@
   <ItemGroup>
     <Reference Include="PluginApi">
       <HintPath>$(PluginApiDir)PluginApi.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
