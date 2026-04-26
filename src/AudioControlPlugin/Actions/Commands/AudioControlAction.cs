@@ -110,51 +110,51 @@
 
         private void ApplyControlStates(ActionEditorState actionEditorState)
         {
-            ActionEditorControlState channelState = actionEditorState.GetControlState(ActionEditorControl.Channel.ToLower());
-            ActionEditorControlState typeState = actionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
-            ActionEditorControlState endpointState = actionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
-            ActionEditorControlState toggleDefaultEndpointMode = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpointMode.ToLower());
-            ActionEditorControlState toggleDefaultEndpoint1State = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpoint1.ToLower());
-            ActionEditorControlState toggleDefaultEndpoint2State = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpoint2.ToLower());
-            ActionEditorControlState longPressActionState = actionEditorState.GetControlState(ActionEditorControl.LongPressAction.ToLower());
+            ActionEditorControlState channelControlState = actionEditorState.GetControlState(ActionEditorControl.Channel.ToLower());
+            ActionEditorControlState typeControlState = actionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
+            ActionEditorControlState endpointControlState = actionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
+            ActionEditorControlState toggleDefaultEndpointModeControlState = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpointMode.ToLower());
+            ActionEditorControlState toggleDefaultEndpoint1ControlState = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpoint1.ToLower());
+            ActionEditorControlState toggleDefaultEndpoint2ControlState = actionEditorState.GetControlState(ActionEditorControl.ToggleDefaultEndpoint2.ToLower());
+            ActionEditorControlState longPressActionControlState = actionEditorState.GetControlState(ActionEditorControl.LongPressAction.ToLower());
 
             //
 
-            channelState.IsEnabled = true;
-            channelState.Value = string.IsNullOrEmpty(channelState.Value) ? ActionChannel.None.ToLower() : channelState.Value;
+            channelControlState.IsEnabled = true;
+            channelControlState.Value = string.IsNullOrEmpty(channelControlState.Value) ? ActionChannel.None.ToLower() : channelControlState.Value;
 
-            typeState.IsEnabled = true;
+            typeControlState.IsEnabled = true;
 
-            endpointState.IsEnabled = !string.IsNullOrEmpty(typeState.Value);
+            endpointControlState.IsEnabled = !string.IsNullOrEmpty(typeControlState.Value);
 
-            toggleDefaultEndpointMode.IsEnabled = endpointState.Value == COMMUNICATIONS_NAME || endpointState.Value == MULTIMEDIA_NAME;
-            toggleDefaultEndpointMode.Value = toggleDefaultEndpointMode.IsEnabled ? toggleDefaultEndpointMode.Value : ToggleDefaultEndpointMode.None.ToLower();
+            toggleDefaultEndpointModeControlState.IsEnabled = endpointControlState.Value == COMMUNICATIONS_NAME || endpointControlState.Value == MULTIMEDIA_NAME;
+            toggleDefaultEndpointModeControlState.Value = toggleDefaultEndpointModeControlState.IsEnabled ? toggleDefaultEndpointModeControlState.Value : ToggleDefaultEndpointMode.None.ToLower();
 
-            toggleDefaultEndpoint1State.IsEnabled = toggleDefaultEndpointMode.Value == ToggleDefaultEndpointMode.Communication.ToLower() || toggleDefaultEndpointMode.Value == ToggleDefaultEndpointMode.Multimedia.ToLower() || toggleDefaultEndpointMode.Value == ToggleDefaultEndpointMode.Both.ToLower();
-            toggleDefaultEndpoint1State.Value = toggleDefaultEndpoint1State.IsEnabled ? toggleDefaultEndpoint1State.Value : "";
+            toggleDefaultEndpoint1ControlState.IsEnabled = toggleDefaultEndpointModeControlState.Value == ToggleDefaultEndpointMode.Communication.ToLower() || toggleDefaultEndpointModeControlState.Value == ToggleDefaultEndpointMode.Multimedia.ToLower() || toggleDefaultEndpointModeControlState.Value == ToggleDefaultEndpointMode.Both.ToLower();
+            toggleDefaultEndpoint1ControlState.Value = toggleDefaultEndpoint1ControlState.IsEnabled ? toggleDefaultEndpoint1ControlState.Value : "";
 
-            toggleDefaultEndpoint2State.IsEnabled = toggleDefaultEndpoint1State.IsEnabled;
-            toggleDefaultEndpoint2State.Value = toggleDefaultEndpoint2State.IsEnabled ? toggleDefaultEndpoint2State.Value : "";
+            toggleDefaultEndpoint2ControlState.IsEnabled = toggleDefaultEndpoint1ControlState.IsEnabled;
+            toggleDefaultEndpoint2ControlState.Value = toggleDefaultEndpoint2ControlState.IsEnabled ? toggleDefaultEndpoint2ControlState.Value : "";
 
-            longPressActionState.IsEnabled = !string.IsNullOrEmpty(typeState.Value);
-            longPressActionState.Value = string.IsNullOrEmpty(longPressActionState.Value) ? LongPressAction.None.ToLower() : longPressActionState.Value;
+            longPressActionControlState.IsEnabled = !string.IsNullOrEmpty(typeControlState.Value);
+            longPressActionControlState.Value = string.IsNullOrEmpty(longPressActionControlState.Value) ? LongPressAction.None.ToLower() : longPressActionControlState.Value;
 
             //
 
-            actionEditorState.SetEnabled(ActionEditorControl.Channel.ToLower(), channelState.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.Channel.ToLower(), channelState.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.Type.ToLower(), typeState.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.Type.ToLower(), typeState.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.Endpoint.ToLower(), endpointState.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.Endpoint.ToLower(), endpointState.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpointMode.ToLower(), toggleDefaultEndpointMode.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpointMode.ToLower(), toggleDefaultEndpointMode.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpoint1.ToLower(), toggleDefaultEndpoint1State.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpoint1.ToLower(), toggleDefaultEndpoint1State.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpoint2.ToLower(), toggleDefaultEndpoint2State.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpoint2.ToLower(), toggleDefaultEndpoint2State.Value);
-            actionEditorState.SetEnabled(ActionEditorControl.LongPressAction.ToLower(), longPressActionState.IsEnabled);
-            actionEditorState.SetValue(ActionEditorControl.LongPressAction.ToLower(), longPressActionState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.Channel.ToLower(), channelControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.Channel.ToLower(), channelControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.Type.ToLower(), typeControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.Type.ToLower(), typeControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.Endpoint.ToLower(), endpointControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.Endpoint.ToLower(), endpointControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpointMode.ToLower(), toggleDefaultEndpointModeControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpointMode.ToLower(), toggleDefaultEndpointModeControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpoint1.ToLower(), toggleDefaultEndpoint1ControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpoint1.ToLower(), toggleDefaultEndpoint1ControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.ToggleDefaultEndpoint2.ToLower(), toggleDefaultEndpoint2ControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.ToggleDefaultEndpoint2.ToLower(), toggleDefaultEndpoint2ControlState.Value);
+            actionEditorState.SetEnabled(ActionEditorControl.LongPressAction.ToLower(), longPressActionControlState.IsEnabled);
+            actionEditorState.SetValue(ActionEditorControl.LongPressAction.ToLower(), longPressActionControlState.Value);
         }
 
         private void OnControlsStateRequested(object sender, ActionEditorControlsStateRequestedEventArgs e)
@@ -179,33 +179,22 @@
             }
             else if (e.ControlName == ActionEditorControl.Endpoint.ToLower())
             {
-                ActionEditorControlState typeState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
+                ActionEditorControlState typeControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
                 string endpointType = e.ActionEditorState.GetControlValue(ActionEditorControl.Type.ToLower());
                 if (!string.IsNullOrEmpty(endpointType))
                 {
                     this.EndpointDisplayNames.Clear();
-                    if (endpointType == EndpointType.Capture.ToLower())
+                    if (endpointType == EndpointType.Capture.ToLower() || endpointType == EndpointType.Render.ToLower())
                     {
                         e.AddItem(COMMUNICATIONS_NAME, $"* {COMMUNICATIONS_DISPLAY_NAME}", "");
                         e.AddItem(MULTIMEDIA_NAME, $"* {MULTIMEDIA_DISPLAY_NAME}", "");
                         this.EndpointDisplayNames.TryAdd(COMMUNICATIONS_NAME, COMMUNICATIONS_DISPLAY_NAME);
                         this.EndpointDisplayNames.TryAdd(MULTIMEDIA_NAME, MULTIMEDIA_DISPLAY_NAME);
-                        foreach (IAudioControlDevice device in AudioControl.MMAudio.CaptureDevices.Where(x => x.State == DeviceState.Active))
+                        IEnumerable<MMDevice> deviceCollection = endpointType == EndpointType.Capture.ToLower() ? AudioControl.MMAudio.CaptureDevices : AudioControl.MMAudio.RenderDevices;
+                        foreach (IAudioControlDevice device in deviceCollection.Where(x => x.State == DeviceState.Active))
                         {
                             e.AddItem(device.Id, device.DisplayName, "");
-                            this.EndpointDisplayNames.TryAdd(device.Id, device.DisplayName);
-                        }
-                    }
-                    else if (endpointType == EndpointType.Render.ToLower())
-                    {
-                        e.AddItem(COMMUNICATIONS_NAME, $"* {COMMUNICATIONS_DISPLAY_NAME}", "");
-                        e.AddItem(MULTIMEDIA_NAME, $"* {MULTIMEDIA_DISPLAY_NAME}", "");
-                        this.EndpointDisplayNames.TryAdd(COMMUNICATIONS_NAME, COMMUNICATIONS_DISPLAY_NAME);
-                        this.EndpointDisplayNames.TryAdd(MULTIMEDIA_NAME, MULTIMEDIA_DISPLAY_NAME);
-                        foreach (IAudioControlDevice device in AudioControl.MMAudio.RenderDevices.Where(x => x.State == DeviceState.Active))
-                        {
-                            e.AddItem(device.Id, device.DisplayName, "");
-                            this.EndpointDisplayNames.TryAdd(device.Id, device.DisplayName);
+                            this.EndpointDisplayNames.TryAdd($"{device.Id}:{device.DisplayName}", device.DisplayName);
                         }
                     }
                     else if (endpointType == EndpointType.Application.ToLower())
@@ -216,10 +205,10 @@
                         {
                             if (!string.IsNullOrEmpty(session.DisplayName))
                             {
-                                if (!this.EndpointDisplayNames.Keys.Any(x => (AudioSessionInstanceIdentifier.FromString(x) is AudioSessionInstanceIdentifier asii) && ((asii.ExePath == session.ExePath) || (session.ExeId == Guid.Empty.ToString() && asii.ExeId == session.ExeId))))
+                                if (!this.EndpointDisplayNames.Keys.Any(x => (AudioSessionInstanceIdentifier.FromString(x.Split(':').First()) is AudioSessionInstanceIdentifier asii) && ((asii.ExePath == session.ExePath) || (session.ExeId == Guid.Empty.ToString() && asii.ExeId == session.ExeId))))
                                 {
                                     e.AddItem(session.Id, session.DisplayName, "");
-                                    this.EndpointDisplayNames.TryAdd(session.Id, session.DisplayName);
+                                    this.EndpointDisplayNames.TryAdd($"{session.Id}:{session.DisplayName}", session.DisplayName);
                                 }
                             }
                         }
@@ -228,18 +217,18 @@
             }
             else if (e.ControlName == ActionEditorControl.ToggleDefaultEndpointMode.ToLower())
             {
-                ActionEditorControlState typeState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
-                ActionEditorControlState endpointState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
+                ActionEditorControlState typeControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
+                ActionEditorControlState endpointControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
 
                 e.AddItem(ToggleDefaultEndpointMode.None.ToLower(), "None", "");
 
-                if (endpointState.Value == COMMUNICATIONS_NAME || endpointState.Value == MULTIMEDIA_NAME)
+                if (endpointControlState.Value == COMMUNICATIONS_NAME || endpointControlState.Value == MULTIMEDIA_NAME)
                 {
-                    if (endpointState.Value == COMMUNICATIONS_NAME)
+                    if (endpointControlState.Value == COMMUNICATIONS_NAME)
                     {
                         e.AddItem(ToggleDefaultEndpointMode.Communication.ToLower(), "Communication", "");
                     }
-                    else if (endpointState.Value == MULTIMEDIA_NAME)
+                    else if (endpointControlState.Value == MULTIMEDIA_NAME)
                     {
                         e.AddItem(ToggleDefaultEndpointMode.Multimedia.ToLower(), "Multimedia", "");
                     }
@@ -249,17 +238,17 @@
             }
             else if (e.ControlName == ActionEditorControl.ToggleDefaultEndpoint1.ToLower() || e.ControlName == ActionEditorControl.ToggleDefaultEndpoint2.ToLower())
             {
-                ActionEditorControlState typeState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
-                if (!string.IsNullOrEmpty(typeState.Value))
+                ActionEditorControlState typeControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
+                if (!string.IsNullOrEmpty(typeControlState.Value))
                 {
-                    if (typeState.Value == EndpointType.Capture.ToLower())
+                    if (typeControlState.Value == EndpointType.Capture.ToLower())
                     {
                         foreach (IAudioControlDevice device in AudioControl.MMAudio.CaptureDevices.Where(x => x.State == DeviceState.Active))
                         {
                             e.AddItem(device.Id, device.DisplayName, "");
                         }
                     }
-                    else if (typeState.Value == EndpointType.Render.ToLower())
+                    else if (typeControlState.Value == EndpointType.Render.ToLower())
                     {
                         foreach (IAudioControlDevice device in AudioControl.MMAudio.RenderDevices.Where(x => x.State == DeviceState.Active))
                         {
@@ -270,17 +259,17 @@
             }
             else if (e.ControlName == ActionEditorControl.LongPressAction.ToLower())
             {
-                ActionEditorControlState typeState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
-                ActionEditorControlState endpointState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
+                ActionEditorControlState typeControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Type.ToLower());
+                ActionEditorControlState endpointControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
 
                 e.AddItem(LongPressAction.None.ToLower(), "None", "");
 
-                if (typeState.Value == EndpointType.Capture.ToLower() || typeState.Value == EndpointType.Render.ToLower())
+                if (typeControlState.Value == EndpointType.Capture.ToLower() || typeControlState.Value == EndpointType.Render.ToLower())
                 {
                     e.AddItem(LongPressAction.MuteAll.ToLower(), "Mute/Unmute all", "");
                 }
 
-                if (endpointState.Value == COMMUNICATIONS_NAME || endpointState.Value == MULTIMEDIA_NAME)
+                if (endpointControlState.Value == COMMUNICATIONS_NAME || endpointControlState.Value == MULTIMEDIA_NAME)
                 {
                     e.AddItem(LongPressAction.ToggleDefaultEndpoint.ToLower(), "Toggle default endpoint", "");
                 }
@@ -299,8 +288,8 @@
 
             string displayName = string.Empty;
 
-            ActionEditorControlState endpointState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
-            this.EndpointDisplayNames.TryGetValue(endpointState.Value, out string endpointDisplayName);
+            ActionEditorControlState endpointControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
+            this.EndpointDisplayNames.TryGetValue(endpointControlState.Value, out string endpointDisplayName);
 
             if (this.Parent is ActionEditorCommand)
             {
@@ -319,7 +308,7 @@
 
             displayName += $"{endpointDisplayName}";
 
-            if (endpointState.Value == COMMUNICATIONS_NAME || endpointState.Value == MULTIMEDIA_NAME)
+            if (endpointControlState.Value == COMMUNICATIONS_NAME || endpointControlState.Value == MULTIMEDIA_NAME)
             {
                 string type = Enum.Parse(typeof(EndpointType), e.ActionEditorState.GetControlValue(ActionEditorControl.Type.ToLower()), true).ToString();
                 displayName += $" {type.ToLower()}";
@@ -347,7 +336,7 @@
             return $"{channel}+{type}+{endpoint}+{toggleDefaultEndpointMode}+{toggleDefaultEndpoint1}+{toggleDefaultEndpoint2}+{longPressAction}";
         }
 
-        private bool TryDecodeActionParametersString(string actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction)
+        private bool TryDecodeActionParametersString(string actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction)
         {
             try
             {
@@ -363,7 +352,8 @@
 
                 channel = (ActionChannel)Enum.Parse(typeof(ActionChannel), channelParam, true);
                 type = (EndpointType)Enum.Parse(typeof(EndpointType), typeParam, true);
-                endpointId = endpointParam;
+                endpointId = endpointParam.Split(':').First();
+                endpointName = endpointParam.Split(':').Last();
                 toggleDefaultEndpointMode = (ToggleDefaultEndpointMode)Enum.Parse(typeof(ToggleDefaultEndpointMode), toggleDefaultEndpointModeParam, true);
                 toggleDefaultEndpoint1Id = toggleDefaultEndpoint1Param;
                 toggleDefaultEndpoint2Id = toggleDefaultEndpoint2Param;
@@ -422,6 +412,7 @@
                 channel = ActionChannel.None;
                 type = EndpointType.Capture;
                 endpointId = null;
+                endpointName = null;
                 toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
                 toggleDefaultEndpoint1Id = null;
                 toggleDefaultEndpoint2Id = null;
@@ -430,11 +421,12 @@
             }
         }
 
-        private bool TryDecodeActionParameters(ActionEditorActionParameters actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction)
+        private bool TryDecodeActionParameters(ActionEditorActionParameters actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction)
         {
             channel = ActionChannel.None;
             type = EndpointType.Capture;
             endpointId = null;
+            endpointName = null;
             toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
             toggleDefaultEndpoint1Id = null;
             toggleDefaultEndpoint2Id = null;
@@ -453,7 +445,9 @@
                 string typeParam = actionParameters.Parameters.GetValue(ActionEditorControl.Type.ToLower(), "");
                 type = (EndpointType)Enum.Parse(typeof(EndpointType), typeParam, true);
 
-                endpointId = actionParameters.Parameters.GetValue(ActionEditorControl.Endpoint.ToLower(), "");
+                string endpointParam = actionParameters.Parameters.GetValue(ActionEditorControl.Endpoint.ToLower(), "");
+                endpointId = endpointParam.Split(':').First();
+                endpointName = endpointParam.Split(':').Last();
 
                 string toggleDefaultEndpointModeParam = actionParameters.Parameters.GetValue(ActionEditorControl.ToggleDefaultEndpointMode.ToLower(), ToggleDefaultEndpointMode.None.ToLower());
                 toggleDefaultEndpointMode = (ToggleDefaultEndpointMode)Enum.Parse(typeof(ToggleDefaultEndpointMode), toggleDefaultEndpointModeParam, true);
@@ -475,11 +469,11 @@
 
         private void RefreshActionImage(string actionParametersString)
         {
-            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
+            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
                 AudioImageData audioImageData = null;
                 bool highlighted = AudioControlAction.IsHighlighted(actionParametersString, channel);
-                if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                 {
                     audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
                 }
@@ -551,7 +545,7 @@
 
         public BitmapImage GetImage(ActionEditorActionParameters actionParameters, int imageWidth, int imageHeight)
         {
-            if (this.TryDecodeActionParameters(actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
+            if (this.TryDecodeActionParameters(actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
                 string actionParametersString = this.StringifyActionParameters(actionParameters);
                 if (this.ActionImageStore.TryGetImage(actionParametersString, PluginImage.GetImageSize(imageWidth, imageHeight), out BitmapImage bitmapImage))
@@ -586,22 +580,22 @@
             }
 
             string actionParametersString = this.StringifyActionParameters(actionParameters);
-            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
+            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
                 if (buttonEvent.EventType == DeviceButtonEventType.Press)
                 {
                     if (channel == ActionChannel.None)
                     {
-                        if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                        if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                         {
                             AudioControl.ToggleMute(audioControl);
                         }
                     }
                     else if (channel == ActionChannel.A)
                     {
-                        if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
+                        if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out string endpointNameA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                         {
-                            if (AudioControl.TryGetAudioControl(endpointIdA, out IAudioControl audioControlA))
+                            if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl audioControlA))
                             {
                                 AudioControl.ToggleMute(audioControlA);
                             }
@@ -609,9 +603,9 @@
                     }
                     else if (channel == ActionChannel.B)
                     {
-                        if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
+                        if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out string endpointNameB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                         {
-                            if (AudioControl.TryGetAudioControl(endpointIdB, out IAudioControl audioControlB))
+                            if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl audioControlB))
                             {
                                 AudioControl.ToggleMute(audioControlB);
                             }
@@ -619,9 +613,9 @@
                     }
                     else if (channel == ActionChannel.C)
                     {
-                        if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
+                        if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out string endpointNameC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                         {
-                            if (AudioControl.TryGetAudioControl(endpointIdC, out IAudioControl audioControlC))
+                            if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl audioControlC))
                             {
                                 AudioControl.ToggleMute(audioControlC);
                             }
@@ -640,7 +634,7 @@
             }
 
             string actionParametersString = this.StringifyActionParameters(actionParameters);
-            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
+            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
                 if (touchEvent.EventType == DeviceTouchEventType.Tap)
                 {
@@ -659,14 +653,14 @@
                 }
                 else if (touchEvent.EventType == DeviceTouchEventType.DoubleTap)
                 {
-                    if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                     {
                         AudioControl.ToggleMute(audioControl);
                     }
                 }
                 else if (touchEvent.EventType == DeviceTouchEventType.LongPress)
                 {
-                    if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                     {
                         if (longPressAction == LongPressAction.MuteAll)
                         {
@@ -704,7 +698,7 @@
                 }
                 else if (touchEvent.EventType == DeviceTouchEventType.Move)
                 {
-                    if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                     {
                         if (touchEvent.DeltaX != 0)
                         {
@@ -748,20 +742,20 @@
             }
 
             string actionParametersString = this.StringifyActionParameters(actionParameters);
-            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
+            if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
             {
                 if (channel == ActionChannel.None)
                 {
-                    if (AudioControl.TryGetAudioControl(endpointId, out IAudioControl audioControl))
+                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                     {
                         AudioControl.SetRelativeVolume(audioControl, diff);
                     }
                 }
                 else if (channel == ActionChannel.A)
                 {
-                    if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
+                    if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out string endpointNameA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdA, out IAudioControl audioControlA))
+                        if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl audioControlA))
                         {
                             AudioControl.SetRelativeVolume(audioControlA, diff);
                         }
@@ -769,9 +763,9 @@
                 }
                 else if (channel == ActionChannel.B)
                 {
-                    if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
+                    if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out string endpointNameB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdB, out IAudioControl audioControlB))
+                        if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl audioControlB))
                         {
                             AudioControl.SetRelativeVolume(audioControlB, diff);
                         }
@@ -779,9 +773,9 @@
                 }
                 else if (channel == ActionChannel.C)
                 {
-                    if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
+                    if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out string endpointNameC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdC, out IAudioControl audioControlC))
+                        if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl audioControlC))
                         {
                             AudioControl.SetRelativeVolume(audioControlC, diff);
                         }

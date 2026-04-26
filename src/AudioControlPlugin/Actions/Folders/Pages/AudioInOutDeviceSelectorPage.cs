@@ -28,7 +28,7 @@
 
         public override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
         {
-            if (AudioControl.TryGetAudioControl(actionParameter, out IAudioControl audioControl))
+            if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
             {
                 PluginImage.GetImageSize(imageSize, out int width, out int height);
                 using (Bitmap iconBmp = PluginImage.GetIcon(audioControl.IconPath))
@@ -70,7 +70,7 @@
         {
             if (touchEvent.EventType == DeviceTouchEventType.Tap)
             {
-                if (AudioControl.TryGetAudioControl(actionParameter, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
                 {
                     AudioControl.MMAudio.AudioPolicyConfig.SetPersistedDefaultAudioEndpoint((uint)this.Session.ProcessId, this.Flow, Role.Multimedia, audioControl.Id);
                     AudioControl.MMAudio.AudioPolicyConfig.SetPersistedDefaultAudioEndpoint((uint)this.Session.ProcessId, this.Flow, Role.Console, audioControl.Id);

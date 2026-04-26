@@ -24,7 +24,7 @@
             Session
         }
 
-        public static bool TryGetEndpointType(string endpointId, out EndpointType? type)
+        public static bool TryGetEndpointType(string endpointId, string endpointName, out EndpointType? type)
         {
             if (!string.IsNullOrEmpty(endpointId))
             {
@@ -35,15 +35,20 @@
             return false;
         }
 
-        public static bool TryGetAudioControl(string endpointId, out IAudioControl audioControl)
+        public static bool TryGetAudioControl(string endpointId, string endpointName, out IAudioControl audioControl)
         {
-            if (TryGetEndpointType(endpointId, out EndpointType? type))
+            if (TryGetEndpointType(endpointId, endpointName, out EndpointType? type))
             {
                 if (type == EndpointType.Device)
                 {
-                    if (AudioControl.MMAudio.Devices.FirstOrDefault(x => x.Id == endpointId) is IAudioControlDevice device)
+                    if (AudioControl.MMAudio.Devices.FirstOrDefault(x => x.Id == endpointId) is IAudioControlDevice deviceById)
                     {
-                        audioControl = device;
+                        audioControl = deviceById;
+                        return true;
+                    }
+                    else if (!string.IsNullOrEmpty(endpointName) && AudioControl.MMAudio.Devices.FirstOrDefault(x => x.DeviceName == endpointName) is IAudioControlDevice deviceByName)
+                    {
+                        audioControl = deviceByName;
                         return true;
                     }
                 }
