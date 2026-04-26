@@ -8,6 +8,8 @@
 
     using WindowsInterop.CoreAudio;
 
+    using static Loupedeck.AudioControlPlugin.PluginExtension;
+
     internal class AudioSessionsPage : FolderPage
     {
         public enum DefaultType
@@ -240,6 +242,13 @@
                         this.NavigateTo(new AudioInOutSessionPage(base.Folder, audioControlSession));
                     }
                     this._selectedActionName = actionParameter;
+                }
+                else if (touchEvent.EventType == DeviceTouchEventType.Move)
+                {
+                    if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
+                    {
+                        AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
+                    }
                 }
             }
             return false;

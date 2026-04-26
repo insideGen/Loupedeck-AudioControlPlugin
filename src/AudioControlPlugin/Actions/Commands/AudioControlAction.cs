@@ -10,6 +10,8 @@
     using WindowsInterop.CoreAudio;
     using WindowsInterop.Win32;
 
+    using static Loupedeck.AudioControlPlugin.PluginExtension;
+
     internal class AudioControlAction
     {
         public const string COMMUNICATIONS_NAME = "defaultCommunications";
@@ -700,7 +702,7 @@
                 {
                     if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                     {
-                        if (touchEvent.DeltaX != 0)
+                        if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Horizontal)
                         {
                             if (toggleDefaultEndpointMode != ToggleDefaultEndpointMode.None)
                             {
@@ -724,7 +726,7 @@
                                 }
                             }
                         }
-                        else if (touchEvent.DeltaY != 0)
+                        else if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
                         {
                             AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
                         }

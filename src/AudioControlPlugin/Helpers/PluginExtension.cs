@@ -6,6 +6,29 @@
 
     internal static class PluginExtension
     {
+        public enum DeviceTouchEventOrientation
+        {
+            Horizontal,
+            Vertical,
+            None
+        }
+
+        public static DeviceTouchEventOrientation GetOrientation(this DeviceTouchEvent touchEvent)
+        {
+            if (Math.Abs(touchEvent.DeltaX) > Math.Abs(touchEvent.DeltaY))
+            {
+                return DeviceTouchEventOrientation.Horizontal;
+            }
+            else if (Math.Abs(touchEvent.DeltaY) > Math.Abs(touchEvent.DeltaX))
+            {
+                return DeviceTouchEventOrientation.Vertical;
+            }
+            else
+            {
+                return DeviceTouchEventOrientation.None;
+            }
+        }
+
         public static Color WarmWhiteColor { get; } = Color.FromArgb(255, 240, 150);
 
         public static Color Filter(this Color color, float red, float green, float blue)

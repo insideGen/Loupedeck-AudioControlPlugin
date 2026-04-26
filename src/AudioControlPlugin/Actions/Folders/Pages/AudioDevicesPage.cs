@@ -8,6 +8,8 @@
 
     using WindowsInterop.CoreAudio;
 
+    using static Loupedeck.AudioControlPlugin.PluginExtension;
+
     internal class AudioDevicesPage : FolderPage
     {
         private readonly DataFlow _dataFlow;
@@ -183,13 +185,20 @@
                 }
                 else if (touchEvent.EventType == DeviceTouchEventType.Move)
                 {
-                    if (touchEvent.DeltaY > 0)
+                    if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Horizontal)
                     {
-                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Multimedia);
+                        if (touchEvent.DeltaX > 0)
+                        {
+                            AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Multimedia);
+                        }
+                        else if (touchEvent.DeltaX < 0)
+                        {
+                            AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Communications);
+                        }
                     }
-                    else if (touchEvent.DeltaY < 0)
+                    else if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
                     {
-                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Communications);
+                        AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
                     }
                 }
             }
