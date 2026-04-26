@@ -115,7 +115,7 @@
             }
             else
             {
-                this.graphicsWidth50.DrawString("Inactive", this.calibri10Font, this.whiteBrush, new Rectangle(0, this.imageWidth50.Height - 12, this.imageWidth50.Width, 12), this.cFormat);
+                this.graphicsWidth50.DrawString("No audio", this.calibri10Font, this.whiteBrush, new Rectangle(0, this.imageWidth50.Height - 12, this.imageWidth50.Width, 12), this.cFormat);
             }
 
             return this.imageWidth50;
@@ -179,7 +179,7 @@
             }
             else
             {
-                this.graphicsWidth80.DrawString("Inactive", this.calibri10Font, this.whiteBrush, new Rectangle(14, 60, 50, 12), this.cFormat);
+                this.graphicsWidth80.DrawString("No audio", this.calibri10Font, this.whiteBrush, new Rectangle(10, 60, 58, 12), this.cFormat);
             }
 
             if (audioData.IsCommunicationsDefault)
