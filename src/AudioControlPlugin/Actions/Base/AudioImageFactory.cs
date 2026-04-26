@@ -78,7 +78,7 @@
             Bitmap icon = null;
             if (!string.IsNullOrEmpty(iconPath))
             {
-                icon = PluginImage.GetIcon(iconPath).Scale(32, 32);
+                icon = PluginImage.GetIcon(iconPath).Scale(32, 32).BlueLightFilter().Desaturate(0.4f);
                 if (icon != null)
                 {
                     using (Graphics graphics = Graphics.FromImage(icon))

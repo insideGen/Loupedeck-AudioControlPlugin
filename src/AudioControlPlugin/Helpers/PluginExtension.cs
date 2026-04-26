@@ -25,6 +25,16 @@
             return color;
         }
 
+        public static Color Desaturate(this Color color, float factor)
+        {
+            factor = Math.Clamp(factor, 0.0f, 1.0f);
+            float gray = 0.299f * color.R + 0.587f * color.G + 0.114f * color.B;
+            int r = (int)Math.Round(color.R + (gray - color.R) * factor);
+            int g = (int)Math.Round(color.G + (gray - color.G) * factor);
+            int b = (int)Math.Round(color.B + (gray - color.B) * factor);
+            return Color.FromArgb(color.A, r, g, b);
+        }
+
         public static Bitmap ToNonIndexed(this Bitmap bitmap)
         {
             if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb)
@@ -70,6 +80,25 @@
                     int G = (int)Math.Round(oldColor.G + (1.0f - oldColor.G / 255.0f) * newColor.G);
                     int B = (int)Math.Round(oldColor.B + (1.0f - oldColor.B / 255.0f) * newColor.B);
                     bitmap.SetPixel(x, y, Color.FromArgb(oldColor.A, R, G, B));
+                }
+            }
+            return bitmap;
+        }
+
+        public static Bitmap Desaturate(this Bitmap bitmap, float factor)
+        {
+            if (factor <= 0.0f)
+            {
+                return bitmap;
+            }
+            bitmap = bitmap.ToNonIndexed();
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Color oldColor = bitmap.GetPixel(x, y);
+                    Color newColor = oldColor.Desaturate(factor);
+                    bitmap.SetPixel(x, y, newColor);
                 }
             }
             return bitmap;
