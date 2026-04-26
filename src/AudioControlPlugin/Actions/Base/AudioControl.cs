@@ -106,7 +106,7 @@
             audioData.Highlighted = highlighted;
 
             audioData.Muted = audioControl.Muted;
-            audioData.VolumeScalar = audioControl.VolumeScalar;
+            audioData.VolumeScalar = (float)Math.Round(audioControl.VolumeScalar, 2);
 
             if (audioControl is IAudioControlDevice device)
             {
@@ -157,6 +157,8 @@
                         }
                     }
                     audioData.Volume = (float)Math.Round(device.Volume, 2);
+                    audioData.MinDecibels = (float)Math.Round(device.MinDecibels, 2);
+                    audioData.MaxDecibels = (float)Math.Round(device.MaxDecibels, 2);
                 }
             }
             else if (audioControl is IAudioControlSession session)
@@ -190,19 +192,42 @@
 
         public static void SetRelativeVolume(IAudioControl audioControl, int diff)
         {
-            bool isScalar = true;
-            float fltDiff, targetVolume;
-            if (audioControl is IAudioControlDevice device && device.DataFlow == DataFlow.Capture)
+            bool preferDecibels = PluginSettings.PreferDecibels;
+
+            if (audioControl is IAudioControlDevice device)
             {
-                float range = Math.Abs(device.MinDecibels) + Math.Abs(device.MaxDecibels);
-                float steps = range / device.IncrementDecibels;
-                if (steps <= 100.0f)
+                if (device.DataFlow == DataFlow.Capture)
                 {
-                    isScalar = false;
+                    float range = Math.Abs(device.MinDecibels) + Math.Abs(device.MaxDecibels);
+                    float steps = range / device.IncrementDecibels;
+                    preferDecibels |= steps <= 100.0f;
                 }
             }
+            else if (audioControl is IAudioControlSession session)
+            {
+                preferDecibels = false;
+            }
 
-            if (isScalar)
+            float fltDiff, targetVolume;
+
+            if (preferDecibels && audioControl is IAudioControlDevice audioControlDevice)
+            {
+                fltDiff = audioControlDevice.IncrementDecibels * diff;
+                targetVolume = audioControlDevice.Volume + fltDiff;
+                if (targetVolume < audioControlDevice.MinDecibels)
+                {
+                    audioControlDevice.Volume = audioControlDevice.MinDecibels;
+                }
+                else if (targetVolume > audioControlDevice.MaxDecibels)
+                {
+                    audioControlDevice.Volume = audioControlDevice.MaxDecibels;
+                }
+                else
+                {
+                    audioControlDevice.Volume = targetVolume;
+                }
+            }
+            else
             {
                 fltDiff = diff / 100.0f;
                 targetVolume = (float)Math.Round(audioControl.VolumeScalar + fltDiff, 2);
@@ -217,24 +242,6 @@
                 else
                 {
                     audioControl.VolumeScalar = targetVolume;
-                }
-            }
-            else
-            {
-                IAudioControlDevice audioControlDevice = audioControl as IAudioControlDevice;
-                fltDiff = audioControlDevice.IncrementDecibels * diff;
-                targetVolume = audioControlDevice.Volume + fltDiff;
-                if (targetVolume < audioControlDevice.MinDecibels)
-                {
-                    audioControlDevice.Volume = audioControlDevice.MinDecibels;
-                }
-                else if (targetVolume > audioControlDevice.MaxDecibels)
-                {
-                    audioControlDevice.Volume = audioControlDevice.MaxDecibels;
-                }
-                else
-                {
-                    audioControlDevice.Volume = targetVolume;
                 }
             }
         }

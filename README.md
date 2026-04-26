@@ -234,12 +234,12 @@ Configure input/output device for application.
 
 #### Settings page
 
-| Setting           | Value               | Description                                                                          |
-| ----------------- | ------------------- | ------------------------------------------------------------------------------------ |
-| FPS               | 10, **20**, 30      | Select refresh rate (impacts the smoothness of the peak meter and processor usage).  |
-| Peak meter        | **Yes**, No         | Enable/disable peek meter.                                                           |
-| Device icon style | **Windows**, Custom | Switch between Windows icon style and custom icons.                                  |
-| Folder decoration | Yes, **No**         | Enable/disable folder icon decoration (a restart is required to apply this setting). |
-| Blue light filter | **Yes**, No         | Enable/disable blue light filter (a restart is required to apply this setting).      |
+| Setting           | Value               | Description                                                                         |
+| ----------------- | ------------------- | ----------------------------------------------------------------------------------- |
+| Blue light filter | **Yes**, No         | Enable/disable blue light filter (a restart is required to apply this setting).     |
+| Device icon style | **Windows**, Custom | Switch between Windows icon style and custom icons.                                 |
+| Prefer decibels   | Yes, **No**         | Enable/disable the “decibels” setting.                                              |
+| Peak meter        | **Yes**, No         | Enable/disable peek meter.                                                          |
+| FPS               | 10, **20**, 30      | Select refresh rate (impacts the smoothness of the peak meter and processor usage). |
 
 *Default values are highlighted in bold.*

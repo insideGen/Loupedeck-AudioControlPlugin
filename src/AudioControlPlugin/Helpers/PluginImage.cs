@@ -111,20 +111,9 @@
                 int pluginNameY = 12;
                 int textY = 0;
 
-                if (PluginSettings.FolderDecorationEnabled)
-                {
-                    graphics.FillRectangle(orangeBrush, 8, 6, 64, 2);
-                    graphics.FillRectangle(orangeBrush, 8, 72, 64, 2);
-                }
-
                 if (pluginName)
                 {
                     textY += 15;
-                    if (PluginSettings.FolderDecorationEnabled)
-                    {
-                        pluginNameY += 2;
-                        textY -= 2;
-                    }
                     graphics.DrawString("Audio", calibri10Font, whiteABrush, new RectangleF(2, pluginNameY, 76, 12), format);
                     graphics.DrawString("Control", calibri10Font, whiteABrush, new RectangleF(2, pluginNameY + 12, 76, 12), format);
                 }
@@ -151,20 +140,9 @@
                 int pluginNameY = 12;
                 int iconY = 0;
 
-                if (PluginSettings.FolderDecorationEnabled)
-                {
-                    graphics.FillRectangle(orangeBrush, 8, 6, 64, 2);
-                    graphics.FillRectangle(orangeBrush, 8, 72, 64, 2);
-                }
-
                 if (pluginName)
                 {
                     iconY += 15;
-                    if (PluginSettings.FolderDecorationEnabled)
-                    {
-                        pluginNameY += 2;
-                        iconY -= 2;
-                    }
                     graphics.DrawString("Audio", calibri10Font, whiteABrush, new RectangleF(2, pluginNameY, 76, 12), format);
                     graphics.DrawString("Control", calibri10Font, whiteABrush, new RectangleF(2, pluginNameY + 12, 76, 12), format);
                 }

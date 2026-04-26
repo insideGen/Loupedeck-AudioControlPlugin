@@ -19,6 +19,9 @@
         public bool Muted { get; set; } = false;
         public float Volume { get; set; } = 0.0f;
         public float VolumeScalar { get; set; } = 0.0f;
+        public float MinDecibels { get; set; } = 0.0f;
+        public float MaxDecibels { get; set; } = 0.0f;
+        public bool HasDecibels => this.MaxDecibels > this.MinDecibels;
         public float PeakL { get; set; } = 0.0f;
         public float PeakR { get; set; } = 0.0f;
 
@@ -37,6 +40,8 @@
             equals &= this.Muted == other.Muted;
             equals &= this.Volume == other.Volume;
             equals &= this.VolumeScalar == other.VolumeScalar;
+            equals &= this.MinDecibels == other.MinDecibels;
+            equals &= this.MaxDecibels == other.MaxDecibels;
             equals &= this.PeakL == other.PeakL;
             equals &= this.PeakR == other.PeakR;
             equals &= this.IsCommunicationsDefault == other.IsCommunicationsDefault;
@@ -44,7 +49,7 @@
             return equals;
         }
 
-        public override int GetHashCode() => (this.NotFound, this.DisplayName, this.UnmutedIconPath, this.MutedIconPath, this.Highlighted, this.IsActive, this.Muted, this.Volume, this.VolumeScalar, this.PeakL, this.PeakR, this.IsCommunicationsDefault, this.IsMultimediaDefault).GetHashCode();
+        public override int GetHashCode() => (this.NotFound, this.DisplayName, this.UnmutedIconPath, this.MutedIconPath, this.Highlighted, this.IsActive, this.Muted, this.Volume, this.VolumeScalar, this.MinDecibels, this.MaxDecibels, this.PeakL, this.PeakR, this.IsCommunicationsDefault, this.IsMultimediaDefault).GetHashCode();
 
         public override bool Equals(object obj) => obj is AudioImageData other && this.Equals(other);
 

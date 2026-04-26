@@ -1,63 +1,37 @@
 ﻿namespace Loupedeck.AudioControlPlugin
 {
-    using System;
-
     internal static class PluginSettings
     {
         private static Plugin _plugin = null;
 
-        private static int? _fps = null;
-        private static bool? _peakMeterEnabled = null;
-        private static bool? _isWindowsIconStyle = null;
-        private static bool? _folderDecorationEnabled = null;
         private static bool? _blueLightFilterEnabled = null;
+        private static bool? _isWindowsIconStyle = null;
+        private static bool? _preferDecibels = null;
+        private static bool? _peakMeterEnabled = null;
+        private static int? _fps = null;
         private static bool? _saveImageOnDisk = null;
 
-        public static int FPS
+        public static bool BlueLightFilterEnabled
         {
             get
             {
-                if (!_fps.HasValue)
+                if (!_blueLightFilterEnabled.HasValue)
                 {
-                    if (_plugin.TryGetPluginSetting("fps", out string value))
+                    if (_plugin.TryGetPluginSetting("blueLightFilterEnabled", out string value))
                     {
-                        _fps = int.Parse(value);
-                    }
-                    else
-                    {
-                        return 20;
-                    }
-                }
-                return (int)_fps;
-            }
-            set
-            {
-                _fps = value;
-                _plugin.SetPluginSetting("fps", value.ToString());
-            }
-        }
-
-        public static bool PeakMeterEnabled
-        {
-            get
-            {
-                if (!_peakMeterEnabled.HasValue)
-                {
-                    if (_plugin.TryGetPluginSetting("peakMeterEnabled", out string value))
-                    {
-                        _peakMeterEnabled = bool.Parse(value);
+                        _blueLightFilterEnabled = bool.Parse(value);
                     }
                     else
                     {
                         return true;
                     }
                 }
-                return (bool)_peakMeterEnabled;
+                return (bool)_blueLightFilterEnabled;
             }
             set
             {
-                _peakMeterEnabled = value;
-                _plugin.SetPluginSetting("peakMeterEnabled", value.ToString());
+                _blueLightFilterEnabled = value;
+                _plugin.SetPluginSetting("blueLightFilterEnabled", value.ToString());
             }
         }
 
@@ -85,51 +59,75 @@
             }
         }
 
-        public static bool FolderDecorationEnabled
+        public static bool PreferDecibels
         {
             get
             {
-                if (!_folderDecorationEnabled.HasValue)
+                if (!_preferDecibels.HasValue)
                 {
-                    if (_plugin.TryGetPluginSetting("folderDecorationEnabled", out string value))
+                    if (_plugin.TryGetPluginSetting("preferDecibels", out string value))
                     {
-                        _folderDecorationEnabled = bool.Parse(value);
+                        _preferDecibels = bool.Parse(value);
                     }
                     else
                     {
                         return false;
                     }
                 }
-                return (bool)_folderDecorationEnabled;
+                return (bool)_preferDecibels;
             }
             set
             {
-                _folderDecorationEnabled = value;
-                _plugin.SetPluginSetting("folderDecorationEnabled", value.ToString());
+                _preferDecibels = value;
+                _plugin.SetPluginSetting("useScalarVolume", value.ToString());
             }
         }
 
-        public static bool BlueLightFilterEnabled
+        public static bool PeakMeterEnabled
         {
             get
             {
-                if (!_blueLightFilterEnabled.HasValue)
+                if (!_peakMeterEnabled.HasValue)
                 {
-                    if (_plugin.TryGetPluginSetting("blueLightFilterEnabled", out string value))
+                    if (_plugin.TryGetPluginSetting("peakMeterEnabled", out string value))
                     {
-                        _blueLightFilterEnabled = bool.Parse(value);
+                        _peakMeterEnabled = bool.Parse(value);
                     }
                     else
                     {
                         return true;
                     }
                 }
-                return (bool)_blueLightFilterEnabled;
+                return (bool)_peakMeterEnabled;
             }
             set
             {
-                _blueLightFilterEnabled = value;
-                _plugin.SetPluginSetting("blueLightFilterEnabled", value.ToString());
+                _peakMeterEnabled = value;
+                _plugin.SetPluginSetting("peakMeterEnabled", value.ToString());
+            }
+        }
+
+        public static int FPS
+        {
+            get
+            {
+                if (!_fps.HasValue)
+                {
+                    if (_plugin.TryGetPluginSetting("fps", out string value))
+                    {
+                        _fps = int.Parse(value);
+                    }
+                    else
+                    {
+                        return 20;
+                    }
+                }
+                return (int)_fps;
+            }
+            set
+            {
+                _fps = value;
+                _plugin.SetPluginSetting("fps", value.ToString());
             }
         }
 

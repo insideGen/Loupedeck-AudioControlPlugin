@@ -101,7 +101,17 @@
 
             if (audioData.IsActive)
             {
-                this.graphicsWidth50.DrawString(Math.Round(audioData.VolumeScalar * 100.0f, 0).ToString() + " %", this.calibri10Font, this.whiteBrush, new Rectangle(0, this.imageWidth50.Height - 12, this.imageWidth50.Width, 12), this.cFormat);
+                string displayVolume = string.Empty;
+                if (PluginSettings.PreferDecibels && audioData.HasDecibels)
+                {
+                    displayVolume = Math.Round(audioData.Volume, 0).ToString() + " dB";
+                }
+                else
+                {
+                    displayVolume = Math.Round(audioData.VolumeScalar * 100.0f, 0).ToString() + " %";
+                }
+
+                this.graphicsWidth50.DrawString(displayVolume, this.calibri10Font, this.whiteBrush, new Rectangle(0, this.imageWidth50.Height - 12, this.imageWidth50.Width, 12), this.cFormat);
             }
             else
             {
@@ -154,7 +164,18 @@
                 this.graphicsWidth80.FillRectangle(this.orangeBrush, volume_x, volume_y, volume_width, volume_height);
                 this.graphicsWidth80.FillRectangle(this.redBrush, peakL_x, peakL_y, peakL_width, peakL_height);
                 this.graphicsWidth80.FillRectangle(this.redBrush, peakR_x, peakR_y, peakR_width, peakR_height);
-                this.graphicsWidth80.DrawString(Math.Round(audioData.VolumeScalar * 100.0f, 0).ToString() + " %", this.calibri10Font, this.whiteBrush, new Rectangle(19, 60, 40, 12), this.cFormat);
+
+                string displayVolume = string.Empty;
+                if (PluginSettings.PreferDecibels && audioData.HasDecibels)
+                {
+                    displayVolume = Math.Round(audioData.Volume, 0).ToString() + " dB";
+                }
+                else
+                {
+                    displayVolume = Math.Round(audioData.VolumeScalar * 100.0f, 0).ToString() + " %";
+                }
+
+                this.graphicsWidth80.DrawString(displayVolume, this.calibri10Font, this.whiteBrush, new Rectangle(18, 60, 42, 12), this.cFormat);
             }
             else
             {

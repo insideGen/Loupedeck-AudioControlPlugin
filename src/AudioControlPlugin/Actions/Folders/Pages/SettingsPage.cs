@@ -12,20 +12,20 @@
         {
 #if DEBUG
             PluginDataDirectory = 1,
-            FPS = 2,
-            PeakMeterEnabled = 3,
-            IsWindowsIconStyle = 4,
-            FolderDecorationEnabled = 5,
-            BlueLightFilterEnabled = 6,
+            BlueLightFilterEnabled = 2,
+            IsWindowsIconStyle = 3,
+            PreferDecibels = 4,
+            PeakMeterEnabled = 5,
+            FPS = 6,
             SaveImageOnDisk = 7,
             ClearAllSettings = 8
 #else
             PluginDataDirectory = -1,
-            FPS = 2,
-            PeakMeterEnabled = 3,
-            IsWindowsIconStyle = 4,
-            FolderDecorationEnabled = 5,
-            BlueLightFilterEnabled = 6,
+            BlueLightFilterEnabled = 2,
+            IsWindowsIconStyle = 3,
+            PreferDecibels = 4,
+            PeakMeterEnabled = 5,
+            FPS = 6,
             SaveImageOnDisk = -7,
             ClearAllSettings = -8
 #endif
@@ -53,30 +53,30 @@
             {
                 valueString = "Open plugin data directory";
             }
-            else if (actionParameter == Command.FPS.ToString())
+            else if (actionParameter == Command.BlueLightFilterEnabled.ToString())
             {
-                settingString = "FPS";
-                valueString = PluginSettings.FPS.ToString();
-            }
-            else if (actionParameter == Command.PeakMeterEnabled.ToString())
-            {
-                settingString = "Peak meter";
-                valueString = PluginSettings.PeakMeterEnabled ? "Yes" : "No";
+                settingString = "Blue light filter";
+                valueString = PluginSettings.BlueLightFilterEnabled ? "Yes" : "No";
             }
             else if (actionParameter == Command.IsWindowsIconStyle.ToString())
             {
                 settingString = "Device icon style";
                 valueString = PluginSettings.IsWindowsIconStyle ? "Windows" : "Custom";
             }
-            else if (actionParameter == Command.FolderDecorationEnabled.ToString())
+            else if (actionParameter == Command.PreferDecibels.ToString())
             {
-                settingString = "Folder decoration";
-                valueString = PluginSettings.FolderDecorationEnabled ? "Yes" : "No";
+                settingString = "Prefer decibels";
+                valueString = PluginSettings.PreferDecibels ? "Yes" : "No";
             }
-            else if (actionParameter == Command.BlueLightFilterEnabled.ToString())
+            else if (actionParameter == Command.PeakMeterEnabled.ToString())
             {
-                settingString = "Blue light filter";
-                valueString = PluginSettings.BlueLightFilterEnabled ? "Yes" : "No";
+                settingString = "Peak meter";
+                valueString = PluginSettings.PeakMeterEnabled ? "Yes" : "No";
+            }
+            else if (actionParameter == Command.FPS.ToString())
+            {
+                settingString = "FPS";
+                valueString = PluginSettings.FPS.ToString();
             }
             else if (actionParameter == Command.SaveImageOnDisk.ToString())
             {
@@ -132,28 +132,28 @@
                         Process.Start("explorer.exe", PluginData.Directory);
                     }
                 }
+                else if (actionParameter == Command.BlueLightFilterEnabled.ToString())
+                {
+                    PluginSettings.BlueLightFilterEnabled = !PluginSettings.BlueLightFilterEnabled;
+                }
+                else if (actionParameter == Command.IsWindowsIconStyle.ToString())
+                {
+                    PluginSettings.IsWindowsIconStyle = !PluginSettings.IsWindowsIconStyle;
+                }
+                else if (actionParameter == Command.PreferDecibels.ToString())
+                {
+                    PluginSettings.PreferDecibels = !PluginSettings.PreferDecibels;
+                }
+                else if (actionParameter == Command.PeakMeterEnabled.ToString())
+                {
+                    PluginSettings.PeakMeterEnabled = !PluginSettings.PeakMeterEnabled;
+                }
                 else if (actionParameter == Command.FPS.ToString())
                 {
                     int index = Array.IndexOf(this.fpsValues, PluginSettings.FPS);
                     int nextIndex = (index + 1) % this.fpsValues.Length;
                     PluginSettings.FPS = this.fpsValues[nextIndex];
                     AudioControlPlugin.RefreshTimer.Interval = 1000.0 / PluginSettings.FPS;
-                }
-                else if (actionParameter == Command.PeakMeterEnabled.ToString())
-                {
-                    PluginSettings.PeakMeterEnabled = !PluginSettings.PeakMeterEnabled;
-                }
-                else if (actionParameter == Command.IsWindowsIconStyle.ToString())
-                {
-                    PluginSettings.IsWindowsIconStyle = !PluginSettings.IsWindowsIconStyle;
-                }
-                else if (actionParameter == Command.FolderDecorationEnabled.ToString())
-                {
-                    PluginSettings.FolderDecorationEnabled = !PluginSettings.FolderDecorationEnabled;
-                }
-                else if (actionParameter == Command.BlueLightFilterEnabled.ToString())
-                {
-                    PluginSettings.BlueLightFilterEnabled = !PluginSettings.BlueLightFilterEnabled;
                 }
                 else if (actionParameter == Command.SaveImageOnDisk.ToString())
                 {
