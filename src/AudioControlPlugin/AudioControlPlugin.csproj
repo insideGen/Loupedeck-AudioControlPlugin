@@ -23,7 +23,7 @@
 
     <PluginShortName>AudioControl</PluginShortName>
 
-    <Version>$(VersionPrefix)2.2.0</Version>
+    <Version>$(VersionPrefix)2.2.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
