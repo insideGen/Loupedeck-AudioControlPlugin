@@ -66,10 +66,10 @@ Displays volume and peak meter and allows volume control.
 
 **`Dial`**
 
-| Gesture    | Description                                                                                                               |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Rotate     | Adjust volume of endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration. |
-| Push       | Mute/unmute endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration.      |
+| Gesture          | Description                                                                                                               |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Rotate           | Adjust volume of endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration. |
+| Push             | Mute/unmute endpoint selected in channel if Channel is not set to None, otherwise endpoint defined in configuration.      |
 
 **`Touch screen` of reset action**
 
@@ -89,10 +89,10 @@ Allows to mute/unmute all capture devices.
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Mute all capture devices.            |
-| Long press | Unmute all capture devices.          |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Mute all capture devices.            |
+| Long press       | Unmute all capture devices.          |
 
 ### Mute/unmute all render devices [Command]
 
@@ -102,10 +102,10 @@ Allows to mute/unmute all render devices.
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Mute all render devices.             |
-| Long press | Unmute all render devices.           |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Mute all render devices.             |
+| Long press       | Unmute all render devices.           |
 
 ### All-in-one [Folder]
 
@@ -139,19 +139,21 @@ Displays all active capture devices and their peak meters (display peak meter on
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Select the device.                   |
-| Double tap | Mute/unmute device.                  |
-| Swipe up   | Set device as default communication. |
-| Swipe down | Set device as default multimedia.    |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Select the device.                   |
+| Double tap       | Mute/unmute device.                  |
+| Left swipe       | Set device as default communication. |
+| Right swipe      | Set device as default multimedia.    |
+| Up swipe         | Increases the volume.                |
+| Down swipe       | Decreases the volume.                |
 
 **`Dial`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Rotate     | Adjust selected device volume.       |
-| Push       | Mute/unmute selected device.         |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Rotate           | Adjust selected device volume.       |
+| Push             | Mute/unmute selected device.         |
 
 ### Render devices [Folder]
 
@@ -163,20 +165,22 @@ Displays all active render devices and their peak meters.
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Select the device.                   |
-| Double tap | Mute/unmute device.                  |
-| Swipe up   | Set device as default communication. |
-| Swipe down | Set device as default multimedia.    |
-| Long press | Open render applications page.       |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Select the device.                   |
+| Double tap       | Mute/unmute device.                  |
+| Long press       | Open render applications page.       |
+| Left swipe       | Set device as default communication. |
+| Right swipe      | Set device as default multimedia.    |
+| Up swipe         | Increases the volume.                |
+| Down swipe       | Decreases the volume.                |
 
 **`Dial`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Rotate     | Adjust selected device volume.       |
-| Push       | Mute/unmute selected device.         |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Rotate           | Adjust selected device volume.       |
+| Push             | Mute/unmute selected device.         |
 
 #### Render applications page
 
@@ -184,18 +188,20 @@ Displays all active applications of a specific render device and their peak mete
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Select the application.              |
-| Double tap | Mute/unmute application.             |
-| Long press | Open input/output device page.       |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Select the application.              |
+| Double tap       | Mute/unmute application.             |
+| Long press       | Open input/output device page.       |
+| Up swipe         | Increases the volume.                |
+| Down swipe       | Decreases the volume.                |
 
 **`Dial`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Rotate     | Adjust selected application volume.  |
-| Push       | Mute/unmute selected application.    |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Rotate           | Adjust selected application volume.  |
+| Push             | Mute/unmute selected application.    |
 
 #### Input/output device page
 
@@ -211,18 +217,20 @@ Displays all active applications and their peak meters.
 
 **`Touch screen`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Single tap | Select the application.              |
-| Double tap | Mute/unmute application.             |
-| Long press | Open input/output device page.       |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Single tap       | Select the application.              |
+| Double tap       | Mute/unmute application.             |
+| Long press       | Open input/output device page.       |
+| Up swipe         | Increases the volume.                |
+| Down swipe       | Decreases the volume.                |
 
 **`Dial`**
 
-| Gesture    | Description                          |
-| ---------- | ------------------------------------ |
-| Rotate     | Adjust selected application volume.  |
-| Push       | Mute/unmute selected application.    |
+| Gesture          | Description                          |
+| ---------------- | ------------------------------------ |
+| Rotate           | Adjust selected application volume.  |
+| Push             | Mute/unmute selected application.    |
 
 #### Input/output device page
 
