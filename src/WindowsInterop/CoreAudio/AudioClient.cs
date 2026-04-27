@@ -1,110 +1,108 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioClient : IDisposable
 {
-    using System;
-    using System.Runtime.InteropServices;
+    private readonly IAudioClient audioClientComObj;
 
-    public class AudioClient : IDisposable
+    private AudioCaptureClient _audioCaptureClient = null;
+
+    public AudioCaptureClient AudioCaptureClient
     {
-        private readonly IAudioClient audioClientComObj;
-
-        private AudioCaptureClient _audioCaptureClient = null;
-
-        public AudioCaptureClient AudioCaptureClient
+        get
         {
-            get
+            if (this._audioCaptureClient == null)
             {
-                if (this._audioCaptureClient == null)
+                try
                 {
-                    try
-                    {
-                        Marshal.ThrowExceptionForHR(this.audioClientComObj.GetService(typeof(AudioCaptureClient).GUID, out object audioCaptureClientComObj));
-                        this._audioCaptureClient = new AudioCaptureClient(audioCaptureClientComObj as IAudioCaptureClient);
-                    }
-                    catch
-                    {
-                        this._audioCaptureClient = null;
-                    }
+                    Marshal.ThrowExceptionForHR(this.audioClientComObj.GetService(typeof(AudioCaptureClient).GUID, out object audioCaptureClientComObj));
+                    this._audioCaptureClient = new AudioCaptureClient(audioCaptureClientComObj as IAudioCaptureClient);
                 }
-                return this._audioCaptureClient;
+                catch
+                {
+                    this._audioCaptureClient = null;
+                }
             }
+            return this._audioCaptureClient;
         }
+    }
 
-        public AudioClient(IAudioClient audioClientComObj)
-        {
-            this.audioClientComObj = audioClientComObj;
-        }
+    public AudioClient(IAudioClient audioClientComObj)
+    {
+        this.audioClientComObj = audioClientComObj;
+    }
 
-        public void GetDevicePeriod(out long defaultDevicePeriod, out long minimumDevicePeriod)
-        {
-            Marshal.ThrowExceptionForHR(this.audioClientComObj.GetDevicePeriod(out defaultDevicePeriod, out minimumDevicePeriod));
-        }
+    public void GetDevicePeriod(out long defaultDevicePeriod, out long minimumDevicePeriod)
+    {
+        Marshal.ThrowExceptionForHR(this.audioClientComObj.GetDevicePeriod(out defaultDevicePeriod, out minimumDevicePeriod));
+    }
 
-        public WaveFormat GetMixFormat()
-        {
-            Marshal.ThrowExceptionForHR(this.audioClientComObj.GetMixFormat(out IntPtr waveFormatPointer));
-            WaveFormat waveFormat = WaveFormat.MarshalFromPtr(waveFormatPointer);
-            Marshal.FreeCoTaskMem(waveFormatPointer);
-            return waveFormat;
-        }
-        
-        public bool IsFormatSupported(AudioClientShareMode shareMode, WaveFormat format, out WaveFormat closestMatchFormat)
-        {
-            int result = this.audioClientComObj.IsFormatSupported(shareMode, format, out IntPtr closestMatchPointer);
-            if (closestMatchPointer != IntPtr.Zero)
-            {
-                closestMatchFormat = WaveFormat.MarshalFromPtr(closestMatchPointer);
-                Marshal.FreeCoTaskMem(closestMatchPointer);
-            }
-            else
-            {
-                closestMatchFormat = null;
-            }
-            return result == 0;
-        }
+    public WaveFormat GetMixFormat()
+    {
+        Marshal.ThrowExceptionForHR(this.audioClientComObj.GetMixFormat(out IntPtr waveFormatPointer));
+        WaveFormat waveFormat = WaveFormat.MarshalFromPtr(waveFormatPointer);
+        Marshal.FreeCoTaskMem(waveFormatPointer);
+        return waveFormat;
+    }
 
-        public void Initialize(AudioClientShareMode shareMode, AudioClientStreamFlags streamFlags, long bufferDuration, long periodicity, WaveFormat format, Guid audioSessionGuid)
+    public bool IsFormatSupported(AudioClientShareMode shareMode, WaveFormat format, out WaveFormat closestMatchFormat)
+    {
+        int result = this.audioClientComObj.IsFormatSupported(shareMode, format, out IntPtr closestMatchPointer);
+        if (closestMatchPointer != IntPtr.Zero)
         {
-            int result = this.audioClientComObj.Initialize(shareMode, streamFlags, bufferDuration, periodicity, format, audioSessionGuid);
+            closestMatchFormat = WaveFormat.MarshalFromPtr(closestMatchPointer);
+            Marshal.FreeCoTaskMem(closestMatchPointer);
         }
+        else
+        {
+            closestMatchFormat = null;
+        }
+        return result == 0;
+    }
 
-        public uint GetBufferSize()
-        {
-            this.audioClientComObj.GetBufferSize(out uint numBufferFrames);
-            return numBufferFrames;
-        }
+    public void Initialize(AudioClientShareMode shareMode, AudioClientStreamFlags streamFlags, long bufferDuration, long periodicity, WaveFormat format, Guid audioSessionGuid)
+    {
+        int result = this.audioClientComObj.Initialize(shareMode, streamFlags, bufferDuration, periodicity, format, audioSessionGuid);
+    }
 
-        public void SetEventHandle(IntPtr eventWaitHandle)
-        {
-            Marshal.ThrowExceptionForHR(this.audioClientComObj.SetEventHandle(eventWaitHandle));
-        }
+    public uint GetBufferSize()
+    {
+        this.audioClientComObj.GetBufferSize(out uint numBufferFrames);
+        return numBufferFrames;
+    }
 
-        public void Start()
-        {
-            Marshal.ThrowExceptionForHR(this.audioClientComObj.Start());
-        }
+    public void SetEventHandle(IntPtr eventWaitHandle)
+    {
+        Marshal.ThrowExceptionForHR(this.audioClientComObj.SetEventHandle(eventWaitHandle));
+    }
 
-        public void Stop()
-        {
-            Marshal.ThrowExceptionForHR(this.audioClientComObj.Stop());
-        }
+    public void Start()
+    {
+        Marshal.ThrowExceptionForHR(this.audioClientComObj.Start());
+    }
 
-        public void Dispose()
-        {
-            this.Stop();
-            this.AudioCaptureClient.Dispose();
-            try
-            {
-                Marshal.ReleaseComObject(this.audioClientComObj);
-            }
-            catch
-            {
-            }
-            GC.SuppressFinalize(this);
-        }
+    public void Stop()
+    {
+        Marshal.ThrowExceptionForHR(this.audioClientComObj.Stop());
+    }
 
-        ~AudioClient()
+    public void Dispose()
+    {
+        this.Stop();
+        this.AudioCaptureClient.Dispose();
+        try
         {
-            this.Dispose();
+            Marshal.ReleaseComObject(this.audioClientComObj);
         }
+        catch
+        {
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    ~AudioClient()
+    {
+        this.Dispose();
     }
 }

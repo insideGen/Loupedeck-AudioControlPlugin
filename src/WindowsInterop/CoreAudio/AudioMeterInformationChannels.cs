@@ -1,63 +1,61 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioMeterInformationChannels
 {
-    using System;
-    using System.Runtime.InteropServices;
+    private readonly IAudioMeterInformation audioMeterInformation;
 
-    public class AudioMeterInformationChannels
+    public int Count
     {
-        private readonly IAudioMeterInformation audioMeterInformation;
-
-        public int Count
+        get
         {
-            get
+            Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetMeteringChannelCount(out int channelCount));
+            return channelCount;
+        }
+    }
+
+    public float this[int index]
+    {
+        get
+        {
+            float[] values = this.ToArray();
+            if (index >= values.Length)
             {
-                Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetMeteringChannelCount(out int channelCount));
-                return channelCount;
+                throw new ArgumentOutOfRangeException(nameof(index), $"Peak index cannot be greater than number of channels ({values.Length})");
             }
+            return values[index];
         }
+    }
 
-        public float this[int index]
+    public AudioMeterInformationChannels(IAudioMeterInformation parent)
+    {
+        this.audioMeterInformation = parent;
+    }
+
+    public float[] ToArray()
+    {
+        int channels = this.Count;
+        float[] peakValues = new float[channels];
+
+        if (channels > 0)
         {
-            get
+            //IntPtr arrayPtr = Marshal.AllocHGlobal(channels * 4); // 4 bytes in float
+            //Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetChannelsPeakValues(channels, arrayPtr));
+            //Marshal.Copy(arrayPtr, peakValues, 0, channels);
+            //Marshal.FreeHGlobal(arrayPtr);
+
+            GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
+            try
             {
-                float[] values = this.ToArray();
-                if (index >= values.Length)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(index), $"Peak index cannot be greater than number of channels ({values.Length})");
-                }
-                return values[index];
+                Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetChannelsPeakValues(channels, Params.AddrOfPinnedObject()));
             }
-        }
-
-        public AudioMeterInformationChannels(IAudioMeterInformation parent)
-        {
-            this.audioMeterInformation = parent;
-        }
-
-        public float[] ToArray()
-        {
-            int channels = this.Count;
-            float[] peakValues = new float[channels];
-
-            if (channels > 0)
+            catch
             {
-                //IntPtr arrayPtr = Marshal.AllocHGlobal(channels * 4); // 4 bytes in float
-                //Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetChannelsPeakValues(channels, arrayPtr));
-                //Marshal.Copy(arrayPtr, peakValues, 0, channels);
-                //Marshal.FreeHGlobal(arrayPtr);
-
-                GCHandle Params = GCHandle.Alloc(peakValues, GCHandleType.Pinned);
-                try
-                {
-                    Marshal.ThrowExceptionForHR(this.audioMeterInformation.GetChannelsPeakValues(channels, Params.AddrOfPinnedObject()));
-                }
-                catch
-                {
-                }
-                Params.Free();
             }
-
-            return peakValues;
+            Params.Free();
         }
+
+        return peakValues;
     }
 }

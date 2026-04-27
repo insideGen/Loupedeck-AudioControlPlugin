@@ -1,208 +1,206 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Timers;
+
+using WindowsInterop.CoreAudio;
+
+using static Loupedeck.AudioControlPlugin.PluginExtension;
+
+internal class AudioDevicesPage : FolderPage
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Linq;
-    using System.Timers;
+    private readonly DataFlow _dataFlow;
+    private readonly ActionImageStore<AudioImageData> _actionImageStore;
 
-    using WindowsInterop.CoreAudio;
+    private string _selectedActionName = string.Empty;
 
-    using static Loupedeck.AudioControlPlugin.PluginExtension;
-
-    internal class AudioDevicesPage : FolderPage
+    public AudioDevicesPage(Folder parent, DataFlow dataFlow) : base(parent)
     {
-        private readonly DataFlow _dataFlow;
-        private readonly ActionImageStore<AudioImageData> _actionImageStore;
+        this._dataFlow = dataFlow;
+        this._actionImageStore = new ActionImageStore<AudioImageData>(new AudioImageFactory());
+    }
 
-        private string _selectedActionName = string.Empty;
-
-        public AudioDevicesPage(Folder parent, DataFlow dataFlow) : base(parent)
+    private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
+    {
+        foreach (string actionName in base.ButtonActionNames)
         {
-            this._dataFlow = dataFlow;
-            this._actionImageStore = new ActionImageStore<AudioImageData>(new AudioImageFactory());
+            this.RefreshActionImage(actionName);
         }
+    }
 
-        private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
+    private void MMAudio_OnDeviceStateChanged(object sender, DeviceStateEventArgs e)
+    {
+        base.ButtonActionNamesChanged();
+    }
+
+    private void MMAudio_OnDevicePropertyChanged(object sender, string e)
+    {
+        base.ButtonActionNamesChanged();
+    }
+
+    private void MMAudio_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    {
+        base.ButtonActionNamesChanged();
+    }
+
+    public override void Enter()
+    {
+        AudioControlPlugin.RefreshTimer.Elapsed += this.Plugin_OnElapsed;
+        AudioControl.MMAudio.DeviceStateChanged += this.MMAudio_OnDeviceStateChanged;
+        AudioControl.MMAudio.DevicePropertyChanged += this.MMAudio_OnDevicePropertyChanged;
+        AudioControl.MMAudio.Devices.CollectionChanged += this.MMAudio_OnCollectionChanged;
+    }
+
+    public override void Leave()
+    {
+        AudioControlPlugin.RefreshTimer.Elapsed -= this.Plugin_OnElapsed;
+        AudioControl.MMAudio.DeviceStateChanged -= this.MMAudio_OnDeviceStateChanged;
+        AudioControl.MMAudio.DevicePropertyChanged -= this.MMAudio_OnDevicePropertyChanged;
+        AudioControl.MMAudio.Devices.CollectionChanged -= this.MMAudio_OnCollectionChanged;
+    }
+
+    public override void Unload()
+    {
+        this._selectedActionName = string.Empty;
+    }
+
+    public void RefreshActionImage(string actionParameter)
+    {
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
         {
-            foreach (string actionName in base.ButtonActionNames)
+            bool highlighted = this._selectedActionName == actionParameter;
+            AudioImageData audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
+            if (this._actionImageStore.UpdateImage(actionParameter, audioImageData))
             {
-                this.RefreshActionImage(actionName);
+                base.CommandImageChanged(actionParameter);
             }
         }
+    }
 
-        private void MMAudio_OnDeviceStateChanged(object sender, DeviceStateEventArgs e)
+    public BitmapImage GetImage(string actionParameter, PluginImageSize imageSize)
+    {
+        if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage bitmapImage))
         {
-            base.ButtonActionNamesChanged();
+            return bitmapImage;
         }
+        this.RefreshActionImage(actionParameter);
+        return PluginImage.DrawBlackImage(imageSize);
+    }
 
-        private void MMAudio_OnDevicePropertyChanged(object sender, string e)
+    public override IEnumerable<string> GetButtonPressActionNames(DeviceType deviceType)
+    {
+        List<string> actionNames = new List<string>();
+        IEnumerable<IAudioControlDevice> devices = null;
+        if (this._dataFlow == DataFlow.Capture)
         {
-            base.ButtonActionNamesChanged();
+            devices = AudioControl.MMAudio.CaptureDevices;
         }
-
-        private void MMAudio_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        else if (this._dataFlow == DataFlow.Render)
         {
-            base.ButtonActionNamesChanged();
+            devices = AudioControl.MMAudio.RenderDevices;
         }
-
-        public override void Enter()
+        if (devices != null)
         {
-            AudioControlPlugin.RefreshTimer.Elapsed += this.Plugin_OnElapsed;
-            AudioControl.MMAudio.DeviceStateChanged += this.MMAudio_OnDeviceStateChanged;
-            AudioControl.MMAudio.DevicePropertyChanged += this.MMAudio_OnDevicePropertyChanged;
-            AudioControl.MMAudio.Devices.CollectionChanged += this.MMAudio_OnCollectionChanged;
-        }
-
-        public override void Leave()
-        {
-            AudioControlPlugin.RefreshTimer.Elapsed -= this.Plugin_OnElapsed;
-            AudioControl.MMAudio.DeviceStateChanged -= this.MMAudio_OnDeviceStateChanged;
-            AudioControl.MMAudio.DevicePropertyChanged -= this.MMAudio_OnDevicePropertyChanged;
-            AudioControl.MMAudio.Devices.CollectionChanged -= this.MMAudio_OnCollectionChanged;
-        }
-
-        public override void Unload()
-        {
-            this._selectedActionName = string.Empty;
-        }
-
-        public void RefreshActionImage(string actionParameter)
-        {
-            if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+            foreach (IAudioControlDevice device in devices.Where(x => x.State == DeviceState.Active))
             {
-                bool highlighted = this._selectedActionName == actionParameter;
-                AudioImageData audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
-                if (this._actionImageStore.UpdateImage(actionParameter, audioImageData))
-                {
-                    base.CommandImageChanged(actionParameter);
-                }
+                actionNames.Add(device.Id);
             }
         }
+        return actionNames;
+    }
 
-        public BitmapImage GetImage(string actionParameter, PluginImageSize imageSize)
+    public override IEnumerable<string> GetEncoderRotateActionNames(DeviceType deviceType)
+    {
+        return new string[] { "encoder-rotate" };
+    }
+
+    public override IEnumerable<string> GetEncoderPressActionNames(DeviceType deviceType)
+    {
+        return new string[] { "encoder-press" };
+    }
+
+    public override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
+    {
+        return this.GetImage(actionParameter, imageSize);
+    }
+
+    public override BitmapImage GetAdjustmentImage(string actionParameter, PluginImageSize imageSize)
+    {
+        return PluginImage.DrawBlackImage(imageSize);
+    }
+
+    public override bool ProcessEncoderEvent(string actionParameter, DeviceEncoderEvent encoderEvent)
+    {
+        if (actionParameter == "encoder-rotate")
         {
-            if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage bitmapImage))
+            if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
             {
-                return bitmapImage;
+                AudioControl.SetRelativeVolume(audioControl, encoderEvent.Clicks);
             }
-            this.RefreshActionImage(actionParameter);
-            return PluginImage.DrawBlackImage(imageSize);
         }
+        return false;
+    }
 
-        public override IEnumerable<string> GetButtonPressActionNames(DeviceType deviceType)
+    public override bool ProcessButtonEvent2(string actionParameter, DeviceButtonEvent2 buttonEvent)
+    {
+        if (actionParameter == "encoder-press")
         {
-            List<string> actionNames = new List<string>();
-            IEnumerable<IAudioControlDevice> devices = null;
-            if (this._dataFlow == DataFlow.Capture)
-            {
-                devices = AudioControl.MMAudio.CaptureDevices;
-            }
-            else if (this._dataFlow == DataFlow.Render)
-            {
-                devices = AudioControl.MMAudio.RenderDevices;
-            }
-            if (devices != null)
-            {
-                foreach (IAudioControlDevice device in devices.Where(x => x.State == DeviceState.Active))
-                {
-                    actionNames.Add(device.Id);
-                }
-            }
-            return actionNames;
-        }
-
-        public override IEnumerable<string> GetEncoderRotateActionNames(DeviceType deviceType)
-        {
-            return new string[] { "encoder-rotate" };
-        }
-
-        public override IEnumerable<string> GetEncoderPressActionNames(DeviceType deviceType)
-        {
-            return new string[] { "encoder-press" };
-        }
-
-        public override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
-        {
-            return this.GetImage(actionParameter, imageSize);
-        }
-
-        public override BitmapImage GetAdjustmentImage(string actionParameter, PluginImageSize imageSize)
-        {
-            return PluginImage.DrawBlackImage(imageSize);
-        }
-
-        public override bool ProcessEncoderEvent(string actionParameter, DeviceEncoderEvent encoderEvent)
-        {
-            if (actionParameter == "encoder-rotate")
+            if (buttonEvent.EventType == DeviceButtonEventType.Press)
             {
                 if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
                 {
-                    AudioControl.SetRelativeVolume(audioControl, encoderEvent.Clicks);
+                    AudioControl.ToggleMute(audioControl);
                 }
             }
-            return false;
         }
+        return false;
+    }
 
-        public override bool ProcessButtonEvent2(string actionParameter, DeviceButtonEvent2 buttonEvent)
+    public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
+    {
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
         {
-            if (actionParameter == "encoder-press")
+            if (touchEvent.EventType == DeviceTouchEventType.Tap)
             {
-                if (buttonEvent.EventType == DeviceButtonEventType.Press)
+                this._selectedActionName = actionParameter;
+            }
+            else if (touchEvent.EventType == DeviceTouchEventType.DoubleTap)
+            {
+                if (actionParameter == this._selectedActionName)
                 {
-                    if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
-                    {
-                        AudioControl.ToggleMute(audioControl);
-                    }
+                    AudioControl.ToggleMute(audioControl);
+                }
+                this._selectedActionName = actionParameter;
+            }
+            else if (touchEvent.EventType == DeviceTouchEventType.LongPress)
+            {
+                this._selectedActionName = actionParameter;
+                if (audioControl is IAudioControlDevice audioControlDevice && audioControlDevice.DataFlow == DataFlow.Render)
+                {
+                    this.NavigateTo(new AudioSessionsPage(base.Folder, audioControlDevice));
                 }
             }
-            return false;
-        }
-
-        public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
-        {
-            if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+            else if (touchEvent.EventType == DeviceTouchEventType.Move)
             {
-                if (touchEvent.EventType == DeviceTouchEventType.Tap)
+                if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Horizontal)
                 {
-                    this._selectedActionName = actionParameter;
-                }
-                else if (touchEvent.EventType == DeviceTouchEventType.DoubleTap)
-                {
-                    if (actionParameter == this._selectedActionName)
+                    if (touchEvent.DeltaX > 0)
                     {
-                        AudioControl.ToggleMute(audioControl);
+                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Multimedia);
                     }
-                    this._selectedActionName = actionParameter;
-                }
-                else if (touchEvent.EventType == DeviceTouchEventType.LongPress)
-                {
-                    this._selectedActionName = actionParameter;
-                    if (audioControl is IAudioControlDevice audioControlDevice && audioControlDevice.DataFlow == DataFlow.Render)
+                    else if (touchEvent.DeltaX < 0)
                     {
-                        this.NavigateTo(new AudioSessionsPage(base.Folder, audioControlDevice));
+                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Communications);
                     }
                 }
-                else if (touchEvent.EventType == DeviceTouchEventType.Move)
+                else if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
                 {
-                    if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Horizontal)
-                    {
-                        if (touchEvent.DeltaX > 0)
-                        {
-                            AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Multimedia);
-                        }
-                        else if (touchEvent.DeltaX < 0)
-                        {
-                            AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Communications);
-                        }
-                    }
-                    else if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
-                    {
-                        AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : touchEvent.DeltaY > 0 ? -1 : 0) * 10);
-                    }
+                    AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : touchEvent.DeltaY > 0 ? -1 : 0) * 10);
                 }
             }
-            return false;
         }
+        return false;
     }
 }

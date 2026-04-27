@@ -1,37 +1,34 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+public class PartsList
 {
-    using System;
+    private readonly IPartsList partsListInterface;
 
-    public class PartsList
+    internal PartsList(IPartsList partsList)
     {
-        private readonly IPartsList partsListInterface;
+        this.partsListInterface = partsList;
+    }
 
-        internal PartsList(IPartsList partsList)
+    public uint Count
+    {
+        get
         {
-            this.partsListInterface = partsList;
+            uint count = 0;
+            this.partsListInterface?.GetCount(out count);
+            return count;
         }
+    }
 
-        public uint Count
+    public Part this[uint index]
+    {
+        get
         {
-            get
+            if (this.partsListInterface == null)
             {
-                uint count = 0;
-                this.partsListInterface?.GetCount(out count);
-                return count;
+                throw new IndexOutOfRangeException();
             }
-        }
-
-        public Part this[uint index]
-        {
-            get
-            {
-                if (this.partsListInterface == null)
-                {
-                    throw new IndexOutOfRangeException();
-                }
-                this.partsListInterface.GetPart(index, out IPart part);
-                return new Part(part);
-            }
+            this.partsListInterface.GetPart(index, out IPart part);
+            return new Part(part);
         }
     }
 }

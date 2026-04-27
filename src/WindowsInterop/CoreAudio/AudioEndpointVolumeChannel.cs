@@ -1,54 +1,52 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioEndpointVolumeChannel
 {
-    using System;
-    using System.Runtime.InteropServices;
+    private readonly uint channel;
+    private readonly IAudioEndpointVolume audioEndpointVolume;
 
-    public class AudioEndpointVolumeChannel
+    private Guid notificationGuid = Guid.Empty;
+
+    /// <summary>
+    /// GUID to pass to AudioEndpointVolumeCallback
+    /// </summary>
+    public Guid NotificationGuid
     {
-        private readonly uint channel;
-        private readonly IAudioEndpointVolume audioEndpointVolume;
+        get => this.notificationGuid;
+        set => this.notificationGuid = value;
+    }
 
-        private Guid notificationGuid = Guid.Empty;
+    internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
+    {
+        this.channel = (uint)channel;
+        this.audioEndpointVolume = parent;
+    }
 
-        /// <summary>
-        /// GUID to pass to AudioEndpointVolumeCallback
-        /// </summary>
-        public Guid NotificationGuid
+    public float VolumeLevel
+    {
+        get
         {
-            get => this.notificationGuid;
-            set => this.notificationGuid = value;
+            Marshal.ThrowExceptionForHR(this.audioEndpointVolume.GetChannelVolumeLevel(this.channel, out float leveldB));
+            return leveldB;
         }
-
-        internal AudioEndpointVolumeChannel(IAudioEndpointVolume parent, int channel)
+        set
         {
-            this.channel = (uint)channel;
-            this.audioEndpointVolume = parent;
+            Marshal.ThrowExceptionForHR(this.audioEndpointVolume.SetChannelVolumeLevel(this.channel, value, ref this.notificationGuid));
         }
+    }
 
-        public float VolumeLevel
+    public float VolumeLevelScalar
+    {
+        get
         {
-            get
-            {
-                Marshal.ThrowExceptionForHR(this.audioEndpointVolume.GetChannelVolumeLevel(this.channel, out float leveldB));
-                return leveldB;
-            }
-            set
-            {
-                Marshal.ThrowExceptionForHR(this.audioEndpointVolume.SetChannelVolumeLevel(this.channel, value, ref this.notificationGuid));
-            }
+            Marshal.ThrowExceptionForHR(this.audioEndpointVolume.GetChannelVolumeLevelScalar(this.channel, out float level));
+            return level;
         }
-
-        public float VolumeLevelScalar
+        set
         {
-            get
-            {
-                Marshal.ThrowExceptionForHR(this.audioEndpointVolume.GetChannelVolumeLevelScalar(this.channel, out float level));
-                return level;
-            }
-            set
-            {
-                Marshal.ThrowExceptionForHR(this.audioEndpointVolume.SetChannelVolumeLevelScalar(this.channel, value, ref this.notificationGuid));
-            }
+            Marshal.ThrowExceptionForHR(this.audioEndpointVolume.SetChannelVolumeLevelScalar(this.channel, value, ref this.notificationGuid));
         }
     }
 }

@@ -1,32 +1,29 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+public class KsJackDescription
 {
-    using System;
+    private readonly IKsJackDescription ksJackDescriptionInterface;
 
-    public class KsJackDescription
+    internal KsJackDescription(IKsJackDescription ksJackDescription)
     {
-        private readonly IKsJackDescription ksJackDescriptionInterface;
+        this.ksJackDescriptionInterface = ksJackDescription;
+    }
 
-        internal KsJackDescription(IKsJackDescription ksJackDescription)
+    public uint Count
+    {
+        get
         {
-            this.ksJackDescriptionInterface = ksJackDescription;
+            this.ksJackDescriptionInterface.GetJackCount(out uint count);
+            return count;
         }
+    }
 
-        public uint Count
+    public string this[uint index]
+    {
+        get
         {
-            get
-            {
-                this.ksJackDescriptionInterface.GetJackCount(out uint count);
-                return count;
-            }
-        }
-
-        public string this[uint index]
-        {
-            get
-            {
-                this.ksJackDescriptionInterface.GetJackDescription(index, out string description);
-                return description;
-            }
+            this.ksJackDescriptionInterface.GetJackDescription(index, out string description);
+            return description;
         }
     }
 }

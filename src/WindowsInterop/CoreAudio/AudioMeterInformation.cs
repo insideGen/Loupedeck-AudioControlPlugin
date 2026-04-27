@@ -1,42 +1,40 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioMeterInformation : IDisposable
 {
-    using System;
-    using System.Runtime.InteropServices;
+    private readonly IAudioMeterInformation realAudioMeterInformation;
 
-    public class AudioMeterInformation : IDisposable
+    public AudioMeterInformationChannels PeakValues { get; }
+
+    public EndpointHardwareSupport HardwareSupport { get; }
+
+    public float MasterPeakValue
     {
-        private readonly IAudioMeterInformation realAudioMeterInformation;
-
-        public AudioMeterInformationChannels PeakValues { get; }
-
-        public EndpointHardwareSupport HardwareSupport { get; }
-
-        public float MasterPeakValue
+        get
         {
-            get
-            {
-                Marshal.ThrowExceptionForHR(this.realAudioMeterInformation.GetPeakValue(out float peak));
-                return peak;
-            }
+            Marshal.ThrowExceptionForHR(this.realAudioMeterInformation.GetPeakValue(out float peak));
+            return peak;
         }
+    }
 
-        internal AudioMeterInformation(IAudioMeterInformation realInterface)
-        {
-            this.realAudioMeterInformation = realInterface;
-            this.PeakValues = new AudioMeterInformationChannels(this.realAudioMeterInformation);
-            Marshal.ThrowExceptionForHR(this.realAudioMeterInformation.QueryHardwareSupport(out int hardwareSupp));
-            this.HardwareSupport = (EndpointHardwareSupport)hardwareSupp;
-        }
+    internal AudioMeterInformation(IAudioMeterInformation realInterface)
+    {
+        this.realAudioMeterInformation = realInterface;
+        this.PeakValues = new AudioMeterInformationChannels(this.realAudioMeterInformation);
+        Marshal.ThrowExceptionForHR(this.realAudioMeterInformation.QueryHardwareSupport(out int hardwareSupp));
+        this.HardwareSupport = (EndpointHardwareSupport)hardwareSupp;
+    }
 
-        public void Dispose()
-        {
-            //Marshal.ReleaseComObject(this.realAudioMeterInformation);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        //Marshal.ReleaseComObject(this.realAudioMeterInformation);
+        GC.SuppressFinalize(this);
+    }
 
-        ~AudioMeterInformation()
-        {
-            this.Dispose();
-        }
+    ~AudioMeterInformation()
+    {
+        this.Dispose();
     }
 }

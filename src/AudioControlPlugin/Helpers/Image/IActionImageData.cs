@@ -1,9 +1,6 @@
-﻿namespace Loupedeck.AudioControlPlugin
-{
-    using System;
+﻿namespace Loupedeck.AudioControlPlugin;
 
-    internal interface IActionImageData : IEquatable<IActionImageData>
-    {
-        string Id { get; }
-    }
+internal interface IActionImageData : IEquatable<IActionImageData>
+{
+    string Id { get; }
 }

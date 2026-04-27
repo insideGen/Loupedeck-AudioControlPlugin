@@ -1,18 +1,15 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback
 {
-    using System;
+    public event EventHandler<IntPtr> Notify;
 
-    internal class AudioEndpointVolumeCallback : IAudioEndpointVolumeCallback
+    public AudioEndpointVolumeCallback()
     {
-        public event EventHandler<IntPtr> Notify;
+    }
 
-        public AudioEndpointVolumeCallback()
-        {
-        }
-
-        void IAudioEndpointVolumeCallback.OnNotify(IntPtr notifyData)
-        {
-            this.Notify?.Invoke(null, notifyData);
-        }
+    void IAudioEndpointVolumeCallback.OnNotify(IntPtr notifyData)
+    {
+        this.Notify?.Invoke(null, notifyData);
     }
 }

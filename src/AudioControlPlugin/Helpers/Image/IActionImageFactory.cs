@@ -1,7 +1,6 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal interface IActionImageFactory<T> where T : IActionImageData
 {
-    internal interface IActionImageFactory<T> where T : IActionImageData
-    {
-        BitmapImage DrawBitmapImage(T actionImageData, PluginImageSize imageSize);
-    }
+    BitmapImage DrawBitmapImage(T actionImageData, PluginImageSize imageSize);
 }

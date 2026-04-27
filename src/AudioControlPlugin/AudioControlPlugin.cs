@@ -1,55 +1,54 @@
-namespace Loupedeck.AudioControlPlugin
+namespace Loupedeck.AudioControlPlugin;
+
+using System.Timers;
+
+// This class contains the plugin-level logic of the Loupedeck plugin.
+public class AudioControlPlugin : Plugin
 {
-    using System.Timers;
+    public static Timer RefreshTimer { get; }
 
-    // This class contains the plugin-level logic of the Loupedeck plugin.
-    public class AudioControlPlugin : Plugin
+    // Gets a value indicating whether this is an API-only plugin.
+    public override bool UsesApplicationApiOnly => true;
+
+    // Gets a value indicating whether this is a Universal plugin or an Application plugin.
+    public override bool HasNoApplication => true;
+
+    // Initializes a new instance of the plugin class.
+    static AudioControlPlugin()
     {
-        public static Timer RefreshTimer { get; }
+        AudioControlPlugin.RefreshTimer = new Timer();
+    }
 
-        // Gets a value indicating whether this is an API-only plugin.
-        public override bool UsesApplicationApiOnly => true;
+    public AudioControlPlugin()
+    {
+        // Initialize the plugin log.
+        PluginLog.Init(this.Log);
 
-        // Gets a value indicating whether this is a Universal plugin or an Application plugin.
-        public override bool HasNoApplication => true;
+        // Initialize the plugin resources.
+        PluginResources.Init(this.Assembly);
 
-        // Initializes a new instance of the plugin class.
-        static AudioControlPlugin()
-        {
-            AudioControlPlugin.RefreshTimer = new Timer();
-        }
+        // Initialize the plugin settings.
+        PluginSettings.Init(this);
 
-        public AudioControlPlugin()
-        {
-            // Initialize the plugin log.
-            PluginLog.Init(this.Log);
+        // Initialize the plugin data.
+        PluginData.Init(this);
+    }
 
-            // Initialize the plugin resources.
-            PluginResources.Init(this.Assembly);
+    // This method is called when the plugin is loaded.
+    public override void Load()
+    {
+        base.Info.Icon16x16 = PluginResources.ReadImage("Icon16x16.png");
+        base.Info.Icon32x32 = PluginResources.ReadImage("Icon32x32.png");
+        base.Info.Icon48x48 = PluginResources.ReadImage("Icon48x48.png");
+        base.Info.Icon256x256 = PluginResources.ReadImage("Icon256x256.png");
 
-            // Initialize the plugin settings.
-            PluginSettings.Init(this);
+        AudioControlPlugin.RefreshTimer.Interval = 1000.0 / PluginSettings.FPS;
+        AudioControlPlugin.RefreshTimer.Enabled = true;
+    }
 
-            // Initialize the plugin data.
-            PluginData.Init(this);
-        }
-
-        // This method is called when the plugin is loaded.
-        public override void Load()
-        {
-            base.Info.Icon16x16 = PluginResources.ReadImage("Icon16x16.png");
-            base.Info.Icon32x32 = PluginResources.ReadImage("Icon32x32.png");
-            base.Info.Icon48x48 = PluginResources.ReadImage("Icon48x48.png");
-            base.Info.Icon256x256 = PluginResources.ReadImage("Icon256x256.png");
-
-            AudioControlPlugin.RefreshTimer.Interval = 1000.0 / PluginSettings.FPS;
-            AudioControlPlugin.RefreshTimer.Enabled = true;
-        }
-
-        // This method is called when the plugin is unloaded.
-        public override void Unload()
-        {
-            AudioControlPlugin.RefreshTimer.Enabled = false;
-        }
+    // This method is called when the plugin is unloaded.
+    public override void Unload()
+    {
+        AudioControlPlugin.RefreshTimer.Enabled = false;
     }
 }

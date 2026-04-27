@@ -1,23 +1,20 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal class AudioMultimediaFolder : Folder
 {
-    using System;
+    public const string ICON_RESOURCE_PATH = "speaker-thin.png";
 
-    internal class AudioMultimediaFolder : Folder
+    public const string DISPLAY_NAME = "Multimedia devices";
+    public const string DESCRIPTION = "";
+    public const string GROUP_NAME = "";
+
+    public AudioMultimediaFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
     {
-        public const string ICON_RESOURCE_PATH = "speaker-thin.png";
+        base.HomePage = new AudioSessionsPage(this, AudioSessionsPage.DefaultType.Multimedia);
+    }
 
-        public const string DISPLAY_NAME = "Multimedia devices";
-        public const string DESCRIPTION = "";
-        public const string GROUP_NAME = "";
-
-        public AudioMultimediaFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
-        {
-            base.HomePage = new AudioSessionsPage(this, AudioSessionsPage.DefaultType.Multimedia);
-        }
-
-        public override BitmapImage GetButtonImage(PluginImageSize imageSize)
-        {
-            return PluginImage.DrawFolderTextImage(true, "Media", imageSize);
-        }
+    public override BitmapImage GetButtonImage(PluginImageSize imageSize)
+    {
+        return PluginImage.DrawFolderTextImage(true, "Media", imageSize);
     }
 }

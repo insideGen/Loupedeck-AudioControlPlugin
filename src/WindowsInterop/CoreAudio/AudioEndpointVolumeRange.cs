@@ -1,40 +1,39 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioEndpointVolumeRange
 {
-    using System.Runtime.InteropServices;
+    private readonly float volumeMinDecibels;
+    private readonly float volumeMaxDecibels;
+    private readonly float volumeIncrementDecibels;
 
-    public class AudioEndpointVolumeRange
+    internal AudioEndpointVolumeRange(IAudioEndpointVolume parent)
     {
-        private readonly float volumeMinDecibels;
-        private readonly float volumeMaxDecibels;
-        private readonly float volumeIncrementDecibels;
+        Marshal.ThrowExceptionForHR(parent.GetVolumeRange(out this.volumeMinDecibels, out this.volumeMaxDecibels, out this.volumeIncrementDecibels));
+    }
 
-        internal AudioEndpointVolumeRange(IAudioEndpointVolume parent)
+    public float MinDecibels
+    {
+        get
         {
-            Marshal.ThrowExceptionForHR(parent.GetVolumeRange(out this.volumeMinDecibels, out this.volumeMaxDecibels, out this.volumeIncrementDecibels));
+            return this.volumeMinDecibels;
         }
+    }
 
-        public float MinDecibels
+    public float MaxDecibels
+    {
+        get
         {
-            get
-            {
-                return this.volumeMinDecibels;
-            }
+            return this.volumeMaxDecibels;
         }
+    }
 
-        public float MaxDecibels
+    public float IncrementDecibels
+    {
+        get
         {
-            get
-            {
-                return this.volumeMaxDecibels;
-            }
-        }
-
-        public float IncrementDecibels
-        {
-            get
-            {
-                return this.volumeIncrementDecibels;
-            }
+            return this.volumeIncrementDecibels;
         }
     }
 }

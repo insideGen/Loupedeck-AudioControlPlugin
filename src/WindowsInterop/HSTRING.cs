@@ -1,66 +1,64 @@
-﻿namespace WindowsInterop
+﻿namespace WindowsInterop;
+
+using System.Runtime.InteropServices;
+using System.Security;
+
+using WindowsInterop.Win32;
+
+[StructLayout(LayoutKind.Sequential), SecuritySafeCritical]
+public readonly struct HSTRING : IEquatable<HSTRING>, IDisposable
 {
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Security;
+    readonly IntPtr handle;
 
-    using WindowsInterop.Win32;
+    public static HSTRING FromString(string str) => new HSTRING(WindowsRuntimeString.FromManaged(str));
 
-    [StructLayout(LayoutKind.Sequential), SecuritySafeCritical]
-    public readonly struct HSTRING : IEquatable<HSTRING>, IDisposable
+    public static implicit operator IntPtr(HSTRING h)
     {
-        readonly IntPtr handle;
+        return h.handle;
+    }
 
-        public static HSTRING FromString(string str) => new HSTRING(WindowsRuntimeString.FromManaged(str));
+    public static implicit operator string(HSTRING h)
+    {
+        return h.ToString();
+    }
 
-        public static implicit operator IntPtr(HSTRING h)
-        {
-            return h.handle;
-        }
+    private HSTRING(IntPtr handle)
+    {
+        this.handle = handle;
+    }
 
-        public static implicit operator string(HSTRING h)
-        {
-            return h.ToString();
-        }
+    public static HSTRING Cast(IntPtr h)
+    {
+        return new HSTRING(h);
+    }
 
-        private HSTRING(IntPtr handle)
-        {
-            this.handle = handle;
-        }
+    public void Delete()
+    {
+        WindowsRuntimeString.DisposeAbi(this.handle);
+    }
 
-        public static HSTRING Cast(IntPtr h)
-        {
-            return new HSTRING(h);
-        }
+    public override string ToString()
+    {
+        return WindowsRuntimeString.FromAbi(this.handle);
+    }
 
-        public void Delete()
-        {
-            WindowsRuntimeString.DisposeAbi(this.handle);
-        }
+    public void Dispose()
+    {
+        this.Delete();
+    }
 
-        public override string ToString()
-        {
-            return WindowsRuntimeString.FromAbi(this.handle);
-        }
+    public bool Equals(HSTRING other)
+    {
+        return this.handle == other.handle;
+    }
 
-        public void Dispose()
-        {
-            this.Delete();
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is HSTRING other && this.Equals(other);
+    }
 
-        public bool Equals(HSTRING other)
-        {
-            return this.handle == other.handle;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is HSTRING other && this.Equals(other);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.handle.GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return this.handle.GetHashCode();
     }
 }

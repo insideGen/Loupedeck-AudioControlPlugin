@@ -1,23 +1,20 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal class AudioRenderSessionsFolder : Folder
 {
-    using System;
+    public const string ICON_RESOURCE_PATH = "application-thin.png";
 
-    internal class AudioRenderSessionsFolder : Folder
+    public const string DISPLAY_NAME = "Applications";
+    public const string DESCRIPTION = "";
+    public const string GROUP_NAME = "";
+
+    public AudioRenderSessionsFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
     {
-        public const string ICON_RESOURCE_PATH = "application-thin.png";
+        base.HomePage = new AudioSessionsPage(this);
+    }
 
-        public const string DISPLAY_NAME = "Applications";
-        public const string DESCRIPTION = "";
-        public const string GROUP_NAME = "";
-
-        public AudioRenderSessionsFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
-        {
-            base.HomePage = new AudioSessionsPage(this);
-        }
-
-        public override BitmapImage GetButtonImage(PluginImageSize imageSize)
-        {
-            return PluginImage.DrawFolderIconImage(true, ICON_RESOURCE_PATH, imageSize);
-        }
+    public override BitmapImage GetButtonImage(PluginImageSize imageSize)
+    {
+        return PluginImage.DrawFolderIconImage(true, ICON_RESOURCE_PATH, imageSize);
     }
 }

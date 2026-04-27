@@ -1,61 +1,58 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+/// <summary>
+/// Windows CoreAudio DeviceTopology
+/// </summary>
+public class DeviceTopology : IDisposable
 {
-    using System;
+    private readonly IDeviceTopology realDeviceTopologyInterface;
 
     /// <summary>
-    /// Windows CoreAudio DeviceTopology
+    /// Retrieves the number of connections associated with this device-topology object
     /// </summary>
-    public class DeviceTopology : IDisposable
+    public int ConnectorCount
     {
-        private readonly IDeviceTopology realDeviceTopologyInterface;
-
-        /// <summary>
-        /// Retrieves the number of connections associated with this device-topology object
-        /// </summary>
-        public int ConnectorCount
+        get
         {
-            get
-            {
-                this.realDeviceTopologyInterface.GetConnectorCount(out int count);
-                return count;
-            }
+            this.realDeviceTopologyInterface.GetConnectorCount(out int count);
+            return count;
         }
+    }
 
-        /// <summary>
-        /// Retrieves the device id of the device represented by this device-topology object
-        /// </summary>
-        public string DeviceId
+    /// <summary>
+    /// Retrieves the device id of the device represented by this device-topology object
+    /// </summary>
+    public string DeviceId
+    {
+        get
         {
-            get
-            {
-                this.realDeviceTopologyInterface.GetDeviceId(out string id);
-                return id;
-            }
+            this.realDeviceTopologyInterface.GetDeviceId(out string id);
+            return id;
         }
+    }
 
-        internal DeviceTopology(IDeviceTopology deviceTopology)
-        {
-            this.realDeviceTopologyInterface = deviceTopology;
-        }
+    internal DeviceTopology(IDeviceTopology deviceTopology)
+    {
+        this.realDeviceTopologyInterface = deviceTopology;
+    }
 
-        /// <summary>
-        /// Retrieves the connector at the supplied index
-        /// </summary>
-        public Connector GetConnector(int index)
-        {
-            this.realDeviceTopologyInterface.GetConnector(index, out IConnector connectorInterface);
-            return new Connector(connectorInterface);
-        }
+    /// <summary>
+    /// Retrieves the connector at the supplied index
+    /// </summary>
+    public Connector GetConnector(int index)
+    {
+        this.realDeviceTopologyInterface.GetConnector(index, out IConnector connectorInterface);
+        return new Connector(connectorInterface);
+    }
 
-        public void Dispose()
-        {
-            //Marshal.ReleaseComObject(this.realDeviceTopologyInterface);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        //Marshal.ReleaseComObject(this.realDeviceTopologyInterface);
+        GC.SuppressFinalize(this);
+    }
 
-        ~DeviceTopology()
-        {
-            this.Dispose();
-        }
+    ~DeviceTopology()
+    {
+        this.Dispose();
     }
 }

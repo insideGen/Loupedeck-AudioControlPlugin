@@ -1,12 +1,11 @@
-﻿namespace WindowsInterop.CoreAudio
-{
-    public readonly struct DeviceIdEventArgs
-    {
-        public string DeviceId { get; }
+﻿namespace WindowsInterop.CoreAudio;
 
-        public DeviceIdEventArgs(string deviceId)
-        {
-            this.DeviceId = deviceId;
-        }
+public readonly struct DeviceIdEventArgs
+{
+    public string DeviceId { get; }
+
+    public DeviceIdEventArgs(string deviceId)
+    {
+        this.DeviceId = deviceId;
     }
 }

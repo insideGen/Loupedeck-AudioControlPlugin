@@ -1,84 +1,81 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using WindowsInterop.Win32;
+
+public class AudioSessionIdentifier
 {
-    using System;
+    public string DeviceId { get; } = null;
+    public string ExePath { get; } = null;
+    public string ExeId { get; } = null;
 
-    using WindowsInterop.Win32;
-
-    public class AudioSessionIdentifier
+    public AudioSessionIdentifier(string deviceId, string exePath, string exeId)
     {
-        public string DeviceId { get; } = null;
-        public string ExePath { get; } = null;
-        public string ExeId { get; } = null;
+        this.DeviceId = deviceId;
+        this.ExePath = exePath;
+        this.ExeId = exeId;
+    }
 
-        public AudioSessionIdentifier(string deviceId, string exePath, string exeId)
+    public static AudioSessionIdentifier FromString(string value)
+    {
+        try
         {
-            this.DeviceId = deviceId;
-            this.ExePath = exePath;
-            this.ExeId = exeId;
+            string[] level1 = value.Split('|');
+            string[] level2 = level1[1].Split(new string[] { "%b" }, StringSplitOptions.None);
+            string deviceId = level1[0];
+            string exePath = level2[0] == "#" ? null : DevicePathMapper.FromDevicePath(level2[0]);
+            string exeId = level2[1];
+            return new AudioSessionIdentifier(deviceId, exePath, exeId);
         }
-
-        public static AudioSessionIdentifier FromString(string value)
+        catch
         {
-            try
-            {
-                string[] level1 = value.Split('|');
-                string[] level2 = level1[1].Split(new string[] { "%b" }, StringSplitOptions.None);
-                string deviceId = level1[0];
-                string exePath = level2[0] == "#" ? null : DevicePathMapper.FromDevicePath(level2[0]);
-                string exeId = level2[1];
-                return new AudioSessionIdentifier(deviceId, exePath, exeId);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public override string ToString()
-        {
-            string exePath = this.ExePath is null ? "#" : DevicePathMapper.FromDriveLetter(this.ExePath);
-            return $"{this.DeviceId}|{exePath}%b{this.ExeId}";
+            return null;
         }
     }
 
-    public class AudioSessionInstanceIdentifier : AudioSessionIdentifier
+    public override string ToString()
     {
-        public int Reserved { get; } = -1;
-        public int ProcessId { get; } = -1;
+        string exePath = this.ExePath is null ? "#" : DevicePathMapper.FromDriveLetter(this.ExePath);
+        return $"{this.DeviceId}|{exePath}%b{this.ExeId}";
+    }
+}
 
-        public AudioSessionInstanceIdentifier(string deviceId, string exePath, string exeId, int reserved, int processId) : base(deviceId, exePath, exeId)
-        {
-            this.Reserved = reserved;
-            this.ProcessId = processId;
-        }
+public class AudioSessionInstanceIdentifier : AudioSessionIdentifier
+{
+    public int Reserved { get; } = -1;
+    public int ProcessId { get; } = -1;
 
-        public static new AudioSessionInstanceIdentifier FromString(string value)
+    public AudioSessionInstanceIdentifier(string deviceId, string exePath, string exeId, int reserved, int processId) : base(deviceId, exePath, exeId)
+    {
+        this.Reserved = reserved;
+        this.ProcessId = processId;
+    }
+
+    public static new AudioSessionInstanceIdentifier FromString(string value)
+    {
+        try
         {
-            try
+            int reserved = 1;
+            int processId = -1;
+            string[] level1 = value.Split('|');
+            if (level1.Length > 2)
             {
-                int reserved = 1;
-                int processId = -1;
-                string[] level1 = value.Split('|');
-                if (level1.Length > 2)
-                {
-                    string[] level2 = level1[2].Split(new string[] { "%b" }, StringSplitOptions.None);
-                    int.TryParse(level2[0], out reserved);
-                    int.TryParse(level2[1], out processId);
-                }
-                AudioSessionIdentifier asi = AudioSessionIdentifier.FromString($"{level1[0]}|{level1[1]}");
-                return new AudioSessionInstanceIdentifier(asi.DeviceId, asi.ExePath, asi.ExeId, reserved, processId);
+                string[] level2 = level1[2].Split(new string[] { "%b" }, StringSplitOptions.None);
+                int.TryParse(level2[0], out reserved);
+                int.TryParse(level2[1], out processId);
+            }
+            AudioSessionIdentifier asi = AudioSessionIdentifier.FromString($"{level1[0]}|{level1[1]}");
+            return new AudioSessionInstanceIdentifier(asi.DeviceId, asi.ExePath, asi.ExeId, reserved, processId);
 
-            }
-            catch
-            {
-                return null;
-            }
         }
-
-        public override string ToString()
+        catch
         {
-            string processId = this.ProcessId <= 0 ? "#" : this.ProcessId.ToString();
-            return $"{base.ToString()}|{this.Reserved}%b{processId}";
+            return null;
         }
+    }
+
+    public override string ToString()
+    {
+        string processId = this.ProcessId <= 0 ? "#" : this.ProcessId.ToString();
+        return $"{base.ToString()}|{this.Reserved}%b{processId}";
     }
 }

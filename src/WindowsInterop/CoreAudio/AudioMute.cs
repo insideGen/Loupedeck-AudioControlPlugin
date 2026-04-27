@@ -1,27 +1,24 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+public class AudioMute
 {
-    using System;
+    private readonly IAudioMute audioMuteInterface;
 
-    public class AudioMute
+    internal AudioMute(IAudioMute audioMute)
     {
-        private readonly IAudioMute audioMuteInterface;
+        this.audioMuteInterface = audioMute;
+    }
 
-        internal AudioMute(IAudioMute audioMute)
+    public bool IsMuted
+    {
+        get
         {
-            this.audioMuteInterface = audioMute;
+            this.audioMuteInterface.GetMute(out bool isMuted);
+            return isMuted;
         }
-
-        public bool IsMuted
+        set
         {
-            get
-            {
-                this.audioMuteInterface.GetMute(out bool isMuted);
-                return isMuted;
-            }
-            set
-            {
-                this.audioMuteInterface.SetMute(value, Guid.Empty);
-            }
+            this.audioMuteInterface.SetMute(value, Guid.Empty);
         }
     }
 }

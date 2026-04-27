@@ -1,61 +1,59 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class SimpleAudioVolume : IDisposable
 {
-    using System;
-    using System.Runtime.InteropServices;
+    private readonly ISimpleAudioVolume simpleAudioVolume;
 
-    public class SimpleAudioVolume : IDisposable
+    internal SimpleAudioVolume(ISimpleAudioVolume realSimpleVolume)
     {
-        private readonly ISimpleAudioVolume simpleAudioVolume;
+        this.simpleAudioVolume = realSimpleVolume;
+    }
 
-        internal SimpleAudioVolume(ISimpleAudioVolume realSimpleVolume)
+    public float Volume
+    {
+        get
         {
-            this.simpleAudioVolume = realSimpleVolume;
+            Marshal.ThrowExceptionForHR(this.simpleAudioVolume.GetMasterVolume(out float level));
+            return level;
         }
-
-        public float Volume
+        set
         {
-            get
+            float normLevel = value;
+            if (normLevel < 0.0f)
             {
-                Marshal.ThrowExceptionForHR(this.simpleAudioVolume.GetMasterVolume(out float level));
-                return level;
+                normLevel = 0.0f;
             }
-            set
+            else if (normLevel > 1.0f)
             {
-                float normLevel = value;
-                if (normLevel < 0.0f)
-                {
-                    normLevel = 0.0f;
-                }
-                else if (normLevel > 1.0f)
-                {
-                    normLevel = 1.0f;
-                }
-                Marshal.ThrowExceptionForHR(this.simpleAudioVolume.SetMasterVolume(normLevel, Guid.Empty));
+                normLevel = 1.0f;
             }
+            Marshal.ThrowExceptionForHR(this.simpleAudioVolume.SetMasterVolume(normLevel, Guid.Empty));
         }
+    }
 
-        public bool Mute
+    public bool Mute
+    {
+        get
         {
-            get
-            {
-                Marshal.ThrowExceptionForHR(this.simpleAudioVolume.GetMute(out bool isMuted));
-                return isMuted;
-            }
-            set
-            {
-                Marshal.ThrowExceptionForHR(this.simpleAudioVolume.SetMute(value, Guid.Empty));
-            }
+            Marshal.ThrowExceptionForHR(this.simpleAudioVolume.GetMute(out bool isMuted));
+            return isMuted;
         }
+        set
+        {
+            Marshal.ThrowExceptionForHR(this.simpleAudioVolume.SetMute(value, Guid.Empty));
+        }
+    }
 
-        public void Dispose()
-        {
-            //Marshal.ReleaseComObject(this.simpleAudioVolume);
-            GC.SuppressFinalize(this);
-        }
+    public void Dispose()
+    {
+        //Marshal.ReleaseComObject(this.simpleAudioVolume);
+        GC.SuppressFinalize(this);
+    }
 
-        ~SimpleAudioVolume()
-        {
-            this.Dispose();
-        }
+    ~SimpleAudioVolume()
+    {
+        this.Dispose();
     }
 }

@@ -1,31 +1,30 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Runtime.InteropServices;
+
+public class AudioEndpointVolumeStepInformation
 {
-    using System.Runtime.InteropServices;
+    private readonly uint step;
+    private readonly uint stepCount;
 
-    public class AudioEndpointVolumeStepInformation
+    internal AudioEndpointVolumeStepInformation(IAudioEndpointVolume parent)
     {
-        private readonly uint step;
-        private readonly uint stepCount;
+        Marshal.ThrowExceptionForHR(parent.GetVolumeStepInfo(out this.step, out this.stepCount));
+    }
 
-        internal AudioEndpointVolumeStepInformation(IAudioEndpointVolume parent)
+    public uint Step
+    {
+        get
         {
-            Marshal.ThrowExceptionForHR(parent.GetVolumeStepInfo(out this.step, out this.stepCount));
+            return this.step;
         }
+    }
 
-        public uint Step
+    public uint StepCount
+    {
+        get
         {
-            get
-            {
-                return this.step;
-            }
-        }
-
-        public uint StepCount
-        {
-            get
-            {
-                return this.stepCount;
-            }
+            return this.stepCount;
         }
     }
 }

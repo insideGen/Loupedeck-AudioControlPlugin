@@ -1,97 +1,95 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Runtime.InteropServices;
+
+public class AudioSessionManager : IDisposable
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Linq;
-    using System.Runtime.InteropServices;
+    public event EventHandler<AudioSessionControl> SessionCreated;
+    public event EventHandler<AudioSessionControl> SessionDisconnected;
+    public event EventHandler<AudioSessionState> StateChanged;
+    public event EventHandler<Exception> SessionLoadError;
 
-    public class AudioSessionManager : IDisposable
+    private readonly IAudioSessionManager2 audioSessionManagerComObject;
+    private readonly AudioSessionNotification audioSessionNotification;
+
+    public ObservableCollection<AudioSessionControl> Sessions { get; }
+
+    internal AudioSessionManager(IAudioSessionManager audioSessionManagerComObject)
     {
-        public event EventHandler<AudioSessionControl> SessionCreated;
-        public event EventHandler<AudioSessionControl> SessionDisconnected;
-        public event EventHandler<AudioSessionState> StateChanged;
-        public event EventHandler<Exception> SessionLoadError;
-
-        private readonly IAudioSessionManager2 audioSessionManagerComObject;
-        private readonly AudioSessionNotification audioSessionNotification;
-
-        public ObservableCollection<AudioSessionControl> Sessions { get; }
-
-        internal AudioSessionManager(IAudioSessionManager audioSessionManagerComObject)
+        this.audioSessionManagerComObject = audioSessionManagerComObject as IAudioSessionManager2;
+        try
         {
-            this.audioSessionManagerComObject = audioSessionManagerComObject as IAudioSessionManager2;
-            try
+            Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.GetSessionEnumerator(out IAudioSessionEnumerator sessionEnumeratorComObject));
+            AudioSessionCollection sessionCollection = new AudioSessionCollection(sessionEnumeratorComObject);
+            sessionCollection.SessionLoadError += this.OnSessionLoadError;
+            this.Sessions = new ObservableCollection<AudioSessionControl>(sessionCollection);
+            foreach (AudioSessionControl session in this.Sessions)
             {
-                Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.GetSessionEnumerator(out IAudioSessionEnumerator sessionEnumeratorComObject));
-                AudioSessionCollection sessionCollection = new AudioSessionCollection(sessionEnumeratorComObject);
-                sessionCollection.SessionLoadError += this.OnSessionLoadError;
-                this.Sessions = new ObservableCollection<AudioSessionControl>(sessionCollection);
-                foreach (AudioSessionControl session in this.Sessions)
-                {
-                    session.StateChanged += this.OnStateChanged;
-                    session.SessionDisconnected += this.OnSessionDisconnected;
-                }
-            }
-            catch
-            {
-                this.Sessions = null;
-            }
-            this.audioSessionNotification = new AudioSessionNotification();
-            this.audioSessionNotification.SessionCreated += this.OnSessionCreated;
-            Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.RegisterSessionNotification(this.audioSessionNotification));
-        }
-
-        private void OnSessionCreated(object sender, AudioSessionControl newSession)
-        {
-            AudioSessionControl audioSessionControl = this.Sessions.FirstOrDefault((AudioSessionControl s) => s.SessionInstanceIdentifier == newSession.SessionInstanceIdentifier);
-            if (audioSessionControl == null)
-            {
-                newSession.StateChanged += this.OnStateChanged;
-                newSession.SessionDisconnected += this.OnSessionDisconnected;
-                this.Sessions.Add(newSession);
-                this.SessionCreated?.Invoke(this, newSession);
-            }
-            else
-            {
-                newSession.Dispose();
+                session.StateChanged += this.OnStateChanged;
+                session.SessionDisconnected += this.OnSessionDisconnected;
             }
         }
-
-        private void OnStateChanged(object sender, AudioSessionState state)
+        catch
         {
-            this.StateChanged?.Invoke(sender, state);
+            this.Sessions = null;
         }
+        this.audioSessionNotification = new AudioSessionNotification();
+        this.audioSessionNotification.SessionCreated += this.OnSessionCreated;
+        Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.RegisterSessionNotification(this.audioSessionNotification));
+    }
 
-        private void OnSessionDisconnected(object sender, AudioSessionDisconnectReason disconnectReason)
+    private void OnSessionCreated(object sender, AudioSessionControl newSession)
+    {
+        AudioSessionControl audioSessionControl = this.Sessions.FirstOrDefault((AudioSessionControl s) => s.SessionInstanceIdentifier == newSession.SessionInstanceIdentifier);
+        if (audioSessionControl == null)
         {
-            AudioSessionControl disconnectedSession = sender as AudioSessionControl;
-            this.SessionDisconnected?.Invoke(sender, disconnectedSession);
-            this.Sessions.Remove(disconnectedSession);
-            disconnectedSession.Dispose();
+            newSession.StateChanged += this.OnStateChanged;
+            newSession.SessionDisconnected += this.OnSessionDisconnected;
+            this.Sessions.Add(newSession);
+            this.SessionCreated?.Invoke(this, newSession);
         }
+        else
+        {
+            newSession.Dispose();
+        }
+    }
 
-        private void OnSessionLoadError(object sender, Exception ex)
-        {
-            this.SessionLoadError?.Invoke(sender, ex);
-        }
+    private void OnStateChanged(object sender, AudioSessionState state)
+    {
+        this.StateChanged?.Invoke(sender, state);
+    }
 
-        public void Dispose()
-        {
-            this.Sessions?.ToList().ForEach((AudioSessionControl s) => s.Dispose());
-            try
-            {
-                Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.UnregisterSessionNotification(this.audioSessionNotification));
-                //Marshal.ReleaseComObject(this.audioSessionManagerComObject);
-            }
-            catch
-            {
-            }
-            GC.SuppressFinalize(this);
-        }
+    private void OnSessionDisconnected(object sender, AudioSessionDisconnectReason disconnectReason)
+    {
+        AudioSessionControl disconnectedSession = sender as AudioSessionControl;
+        this.SessionDisconnected?.Invoke(sender, disconnectedSession);
+        this.Sessions.Remove(disconnectedSession);
+        disconnectedSession.Dispose();
+    }
 
-        ~AudioSessionManager()
+    private void OnSessionLoadError(object sender, Exception ex)
+    {
+        this.SessionLoadError?.Invoke(sender, ex);
+    }
+
+    public void Dispose()
+    {
+        this.Sessions?.ToList().ForEach((AudioSessionControl s) => s.Dispose());
+        try
         {
-            this.Dispose();
+            Marshal.ThrowExceptionForHR(this.audioSessionManagerComObject.UnregisterSessionNotification(this.audioSessionNotification));
+            //Marshal.ReleaseComObject(this.audioSessionManagerComObject);
         }
+        catch
+        {
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    ~AudioSessionManager()
+    {
+        this.Dispose();
     }
 }

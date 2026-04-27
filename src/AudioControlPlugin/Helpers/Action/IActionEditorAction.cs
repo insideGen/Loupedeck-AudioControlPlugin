@@ -1,11 +1,10 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal interface IActionEditorAction
 {
-    internal interface IActionEditorAction
-    {
-        string DisplayName { get; set; }
-        string ResetDisplayName { get; set; }
-        ActionEditor ActionEditor { get; }
-        void ActionImageChanged();
-        void AdjustmentValueChanged();
-    }
+    string DisplayName { get; set; }
+    string ResetDisplayName { get; set; }
+    ActionEditor ActionEditor { get; }
+    void ActionImageChanged();
+    void AdjustmentValueChanged();
 }

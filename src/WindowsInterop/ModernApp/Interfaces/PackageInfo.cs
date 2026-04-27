@@ -1,24 +1,22 @@
-﻿namespace WindowsInterop.ModernApp
+﻿namespace WindowsInterop.ModernApp;
+
+using System.Runtime.InteropServices;
+
+[StructLayout(LayoutKind.Sequential, Pack = 4)]
+public struct PackageInfo
 {
-    using System;
-    using System.Runtime.InteropServices;
+    public int Reserved;
 
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct PackageInfo
-    {
-        public int Reserved;
+    public int Flags;
 
-        public int Flags;
+    [field: MarshalAs(UnmanagedType.LPWStr)]
+    public string Path;
 
-        [field: MarshalAs(UnmanagedType.LPWStr)]
-        public string Path;
+    [field: MarshalAs(UnmanagedType.LPWStr)]
+    public string PackageFullName;
 
-        [field: MarshalAs(UnmanagedType.LPWStr)]
-        public string PackageFullName;
+    [field: MarshalAs(UnmanagedType.LPWStr)]
+    public string PackageFamilyName;
 
-        [field: MarshalAs(UnmanagedType.LPWStr)]
-        public string PackageFamilyName;
-
-        public PackageId PackageId;
-    }
+    public PackageId PackageId;
 }

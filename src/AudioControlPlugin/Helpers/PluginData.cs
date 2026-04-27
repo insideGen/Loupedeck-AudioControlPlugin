@@ -1,39 +1,36 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal static class PluginData
 {
-    using System;
+    private static Plugin _plugin = null;
+    private static string _directory = null;
 
-    internal static class PluginData
+    public static string Directory
     {
-        private static Plugin _plugin = null;
-        private static string _directory = null;
-
-        public static string Directory
+        get
         {
-            get
+            if (_plugin != null && string.IsNullOrEmpty(_directory))
             {
-                if (_plugin != null && string.IsNullOrEmpty(_directory))
+                string pluginDataDirectory = _plugin.GetPluginDataDirectory();
+                if (IoHelpers.EnsureDirectoryExists(pluginDataDirectory))
                 {
-                    string pluginDataDirectory = _plugin.GetPluginDataDirectory();
-                    if (IoHelpers.EnsureDirectoryExists(pluginDataDirectory))
-                    {
-                        _directory = pluginDataDirectory;
-                    }
-                    else
-                    {
-                        _directory = null;
-                    }
+                    _directory = pluginDataDirectory;
                 }
-                return _directory;
+                else
+                {
+                    _directory = null;
+                }
             }
+            return _directory;
         }
+    }
 
-        static PluginData()
-        {
-        }
+    static PluginData()
+    {
+    }
 
-        public static void Init(Plugin plugin)
-        {
-            _plugin = plugin;
-        }
+    public static void Init(Plugin plugin)
+    {
+        _plugin = plugin;
     }
 }

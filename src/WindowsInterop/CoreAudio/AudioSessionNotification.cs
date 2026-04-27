@@ -1,18 +1,15 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+internal class AudioSessionNotification : IAudioSessionNotification
 {
-    using System;
+    public event EventHandler<AudioSessionControl> SessionCreated;
 
-    internal class AudioSessionNotification : IAudioSessionNotification
+    public AudioSessionNotification()
     {
-        public event EventHandler<AudioSessionControl> SessionCreated;
+    }
 
-        public AudioSessionNotification()
-        {
-        }
-
-        void IAudioSessionNotification.OnSessionCreated(IAudioSessionControl newSession)
-        {
-            this.SessionCreated?.Invoke(null, new AudioSessionControl(newSession));
-        }
+    void IAudioSessionNotification.OnSessionCreated(IAudioSessionControl newSession)
+    {
+        this.SessionCreated?.Invoke(null, new AudioSessionControl(newSession));
     }
 }

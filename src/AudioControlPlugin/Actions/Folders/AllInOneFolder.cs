@@ -1,23 +1,20 @@
-﻿namespace Loupedeck.AudioControlPlugin
+﻿namespace Loupedeck.AudioControlPlugin;
+
+internal class AllInOneFolder : Folder
 {
-    using System;
+    public const string ICON_RESOURCE_PATH = "all-in-one.png";
 
-    internal class AllInOneFolder : Folder
+    public const string DISPLAY_NAME = "All in one";
+    public const string DESCRIPTION = "";
+    public const string GROUP_NAME = "";
+
+    public AllInOneFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
     {
-        public const string ICON_RESOURCE_PATH = "all-in-one.png";
+        base.HomePage = new AllInOnePage(this);
+    }
 
-        public const string DISPLAY_NAME = "All in one";
-        public const string DESCRIPTION = "";
-        public const string GROUP_NAME = "";
-
-        public AllInOneFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
-        {
-            base.HomePage = new AllInOnePage(this);
-        }
-
-        public override BitmapImage GetButtonImage(PluginImageSize imageSize)
-        {
-            return PluginImage.DrawFolderIconImage(true, ICON_RESOURCE_PATH, imageSize);
-        }
+    public override BitmapImage GetButtonImage(PluginImageSize imageSize)
+    {
+        return PluginImage.DrawFolderIconImage(true, ICON_RESOURCE_PATH, imageSize);
     }
 }

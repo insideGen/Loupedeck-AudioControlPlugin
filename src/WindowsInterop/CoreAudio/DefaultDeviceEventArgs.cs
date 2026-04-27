@@ -1,18 +1,15 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+public readonly struct DefaultDeviceEventArgs
 {
-    using System;
+    public DataFlow Flow { get; }
+    public Role Role { get; }
+    public string DefaultDeviceId { get; }
 
-    public readonly struct DefaultDeviceEventArgs
+    public DefaultDeviceEventArgs(DataFlow flow, Role role, string defaultDeviceId)
     {
-        public DataFlow Flow { get; }
-        public Role Role { get; }
-        public string DefaultDeviceId { get; }
-
-        public DefaultDeviceEventArgs(DataFlow flow, Role role, string defaultDeviceId)
-        {
-            this.Flow = flow;
-            this.Role = role;
-            this.DefaultDeviceId = defaultDeviceId;
-        }
+        this.Flow = flow;
+        this.Role = role;
+        this.DefaultDeviceId = defaultDeviceId;
     }
 }

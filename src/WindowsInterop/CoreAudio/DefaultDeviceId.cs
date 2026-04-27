@@ -1,9 +1,8 @@
-﻿namespace WindowsInterop.CoreAudio
+﻿namespace WindowsInterop.CoreAudio;
+
+public class DefaultDeviceId
 {
-    public class DefaultDeviceId
-    {
-        public string Communication { get; set; } = null;
-        public string Console { get; set; } = null;
-        public string Multimedia { get; set; } = null;
-    }
+    public string Communication { get; set; } = null;
+    public string Console { get; set; } = null;
+    public string Multimedia { get; set; } = null;
 }
