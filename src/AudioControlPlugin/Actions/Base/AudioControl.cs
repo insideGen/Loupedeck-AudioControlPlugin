@@ -217,7 +217,7 @@
 
             if (preferDecibels && audioControl is IAudioControlDevice audioControlDevice)
             {
-                fltDiff = audioControlDevice.IncrementDecibels * diff;
+                fltDiff = audioControlDevice.IncrementDecibels * (diff < 0 ? -1 : diff > 0 ? 1 : 0);
                 targetVolume = audioControlDevice.Volume + fltDiff;
                 if (targetVolume < audioControlDevice.MinDecibels)
                 {

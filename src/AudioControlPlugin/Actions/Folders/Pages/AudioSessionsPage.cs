@@ -247,7 +247,7 @@
                 {
                     if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
                     {
-                        AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
+                        AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : touchEvent.DeltaY > 0 ? -1 : 0) * 10);
                     }
                 }
             }
