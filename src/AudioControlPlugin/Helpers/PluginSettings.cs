@@ -2,7 +2,7 @@
 
 internal static class PluginSettings
 {
-    private static Plugin _plugin = null;
+    private static Plugin? _plugin = null;
 
     private static bool? _blueLightFilterEnabled = null;
     private static bool? _isWindowsIconStyle = null;
@@ -17,7 +17,7 @@ internal static class PluginSettings
         {
             if (!_blueLightFilterEnabled.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("blueLightFilterEnabled", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("blueLightFilterEnabled", out string value))
                 {
                     _blueLightFilterEnabled = bool.Parse(value);
                 }
@@ -31,7 +31,7 @@ internal static class PluginSettings
         set
         {
             _blueLightFilterEnabled = value;
-            _plugin.SetPluginSetting("blueLightFilterEnabled", value.ToString());
+            _plugin?.SetPluginSetting("blueLightFilterEnabled", value.ToString());
         }
     }
 
@@ -41,7 +41,7 @@ internal static class PluginSettings
         {
             if (!_isWindowsIconStyle.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("isWindowsIconStyle", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("isWindowsIconStyle", out string value))
                 {
                     _isWindowsIconStyle = bool.Parse(value);
                 }
@@ -55,7 +55,7 @@ internal static class PluginSettings
         set
         {
             _isWindowsIconStyle = value;
-            _plugin.SetPluginSetting("isWindowsIconStyle", value.ToString());
+            _plugin?.SetPluginSetting("isWindowsIconStyle", value.ToString());
         }
     }
 
@@ -65,7 +65,7 @@ internal static class PluginSettings
         {
             if (!_preferDecibels.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("preferDecibels", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("preferDecibels", out string value))
                 {
                     _preferDecibels = bool.Parse(value);
                 }
@@ -79,7 +79,7 @@ internal static class PluginSettings
         set
         {
             _preferDecibels = value;
-            _plugin.SetPluginSetting("useScalarVolume", value.ToString());
+            _plugin?.SetPluginSetting("useScalarVolume", value.ToString());
         }
     }
 
@@ -89,7 +89,7 @@ internal static class PluginSettings
         {
             if (!_peakMeterEnabled.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("peakMeterEnabled", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("peakMeterEnabled", out string value))
                 {
                     _peakMeterEnabled = bool.Parse(value);
                 }
@@ -103,7 +103,7 @@ internal static class PluginSettings
         set
         {
             _peakMeterEnabled = value;
-            _plugin.SetPluginSetting("peakMeterEnabled", value.ToString());
+            _plugin?.SetPluginSetting("peakMeterEnabled", value.ToString());
         }
     }
 
@@ -113,7 +113,7 @@ internal static class PluginSettings
         {
             if (!_fps.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("fps", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("fps", out string value))
                 {
                     _fps = int.Parse(value);
                 }
@@ -127,7 +127,7 @@ internal static class PluginSettings
         set
         {
             _fps = value;
-            _plugin.SetPluginSetting("fps", value.ToString());
+            _plugin?.SetPluginSetting("fps", value.ToString());
         }
     }
 
@@ -137,7 +137,7 @@ internal static class PluginSettings
         {
             if (!_saveImageOnDisk.HasValue)
             {
-                if (_plugin.TryGetPluginSetting("saveImageOnDisk", out string value))
+                if (_plugin is not null && _plugin.TryGetPluginSetting("saveImageOnDisk", out string value))
                 {
                     _saveImageOnDisk = bool.Parse(value);
                 }
@@ -151,7 +151,7 @@ internal static class PluginSettings
         set
         {
             _saveImageOnDisk = value;
-            _plugin.SetPluginSetting("saveImageOnDisk", value.ToString());
+            _plugin?.SetPluginSetting("saveImageOnDisk", value.ToString());
         }
     }
 

@@ -44,7 +44,7 @@ internal static class PluginImage
         }
 #endif
         ImageConverter converter = new ImageConverter();
-        return BitmapImage.FromArray((byte[])converter.ConvertTo(image, typeof(byte[])));
+        return BitmapImage.FromArray(converter.ConvertTo(image, typeof(byte[])) as byte[]);
     }
 
     public static void GetImageSize(PluginImageSize imageSize, out int imageWidth, out int imageHeight)
@@ -182,9 +182,9 @@ internal static class PluginImage
         }
     }
 
-    public static Bitmap GetIcon(string iconPath)
+    public static Bitmap? GetIcon(string iconPath)
     {
-        Bitmap iconBitmap = null;
+        Bitmap? iconBitmap = null;
         if (!string.IsNullOrWhiteSpace(iconPath))
         {
             //int iconSize = 32;
@@ -193,7 +193,7 @@ internal static class PluginImage
             if (path.StartsWith('@'))
             {
                 path = path.Substring(1);
-                string color = values.Length > 1 ? values[1] : null;
+                string? color = values.Length > 1 ? values[1] : null;
                 iconBitmap = PluginImage.ReadBitmap(path);
                 if (iconBitmap != null && !string.IsNullOrEmpty(color))
                 {

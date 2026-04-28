@@ -20,7 +20,7 @@ internal class AudioDevicesPage : FolderPage
         this._actionImageStore = new ActionImageStore<AudioImageData>(new AudioImageFactory());
     }
 
-    private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
+    private void Plugin_OnElapsed(object? sender, ElapsedEventArgs e)
     {
         foreach (string actionName in base.ButtonActionNames)
         {
@@ -28,17 +28,17 @@ internal class AudioDevicesPage : FolderPage
         }
     }
 
-    private void MMAudio_OnDeviceStateChanged(object sender, DeviceStateEventArgs e)
+    private void MMAudio_OnDeviceStateChanged(object? sender, DeviceStateEventArgs e)
     {
         base.ButtonActionNamesChanged();
     }
 
-    private void MMAudio_OnDevicePropertyChanged(object sender, string e)
+    private void MMAudio_OnDevicePropertyChanged(object? sender, string e)
     {
         base.ButtonActionNamesChanged();
     }
 
-    private void MMAudio_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void MMAudio_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         base.ButtonActionNamesChanged();
     }
@@ -66,7 +66,7 @@ internal class AudioDevicesPage : FolderPage
 
     public void RefreshActionImage(string actionParameter)
     {
-        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
         {
             bool highlighted = this._selectedActionName == actionParameter;
             AudioImageData audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
@@ -79,7 +79,7 @@ internal class AudioDevicesPage : FolderPage
 
     public BitmapImage GetImage(string actionParameter, PluginImageSize imageSize)
     {
-        if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage bitmapImage))
+        if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage? bitmapImage))
         {
             return bitmapImage;
         }
@@ -90,7 +90,7 @@ internal class AudioDevicesPage : FolderPage
     public override IEnumerable<string> GetButtonPressActionNames(DeviceType deviceType)
     {
         List<string> actionNames = new List<string>();
-        IEnumerable<IAudioControlDevice> devices = null;
+        IEnumerable<IAudioControlDevice>? devices = null;
         if (this._dataFlow == DataFlow.Capture)
         {
             devices = AudioControl.MMAudio.CaptureDevices;
@@ -133,7 +133,7 @@ internal class AudioDevicesPage : FolderPage
     {
         if (actionParameter == "encoder-rotate")
         {
-            if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
+            if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl? audioControl))
             {
                 AudioControl.SetRelativeVolume(audioControl, encoderEvent.Clicks);
             }
@@ -147,7 +147,7 @@ internal class AudioDevicesPage : FolderPage
         {
             if (buttonEvent.EventType == DeviceButtonEventType.Press)
             {
-                if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl? audioControl))
                 {
                     AudioControl.ToggleMute(audioControl);
                 }
@@ -158,7 +158,7 @@ internal class AudioDevicesPage : FolderPage
 
     public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
     {
-        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
         {
             if (touchEvent.EventType == DeviceTouchEventType.Tap)
             {

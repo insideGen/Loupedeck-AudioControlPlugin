@@ -128,7 +128,7 @@ internal static class PluginExtension
 
     public static Bitmap Scale(this Bitmap bitmap, int maxWidth, int maxHeight)
     {
-        if (bitmap == null || (bitmap.Width <= maxWidth && bitmap.Height <= maxHeight))
+        if (bitmap.Width <= maxWidth && bitmap.Height <= maxHeight)
         {
             return bitmap;
         }
@@ -143,6 +143,11 @@ internal static class PluginExtension
         }
         bitmap.Dispose();
         return scaled;
+    }
+
+    public static Bitmap ToBitmap(this BitmapImage image)
+    {
+        return PluginImage.ToBitmap(image);
     }
 
     public static string ToLower(this Enum enumValue)

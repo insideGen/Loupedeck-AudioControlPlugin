@@ -216,6 +216,7 @@ dotnet_diagnostic.CS1591.severity = none
 dotnet_diagnostic.IDE0002.severity = none
 dotnet_diagnostic.IDE0021.severity = warning
 dotnet_diagnostic.IDE0022.severity = warning
+dotnet_diagnostic.IDE0032.severity = none
 # IDE0051: Delete unused private members
 dotnet_diagnostic.IDE0051.severity = none
 dotnet_diagnostic.IDE0052.severity = none

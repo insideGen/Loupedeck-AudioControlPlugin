@@ -20,9 +20,9 @@ internal class AudioControlAction
     public const string FOREGROUND_NAME = "foregroundApplication";
     public const string FOREGROUND_DISPLAY_NAME = "Foreground application";
 
-    public static string ChannelA { get; set; }
-    public static string ChannelB { get; set; }
-    public static string ChannelC { get; set; }
+    public static string ChannelA { get; set; } = string.Empty;
+    public static string ChannelB { get; set; } = string.Empty;
+    public static string ChannelC { get; set; } = string.Empty;
 
     private static bool IsHighlighted(string actionParametersString, ActionChannel channel)
     {
@@ -156,12 +156,12 @@ internal class AudioControlAction
         actionEditorState.SetValue(ActionEditorControl.LongPressAction.ToLower(), longPressActionControlState.Value);
     }
 
-    private void OnControlsStateRequested(object sender, ActionEditorControlsStateRequestedEventArgs e)
+    private void OnControlsStateRequested(object? sender, ActionEditorControlsStateRequestedEventArgs e)
     {
         this.ApplyControlStates(e.ActionEditorState);
     }
 
-    private void OnListboxItemsRequested(object sender, ActionEditorListboxItemsRequestedEventArgs e)
+    private void OnListboxItemsRequested(object? sender, ActionEditorListboxItemsRequestedEventArgs e)
     {
         if (e.ControlName == ActionEditorControl.Channel.ToLower())
         {
@@ -275,7 +275,7 @@ internal class AudioControlAction
         }
     }
 
-    private void OnControlValueChanged(object sender, ActionEditorControlValueChangedEventArgs e)
+    private void OnControlValueChanged(object? sender, ActionEditorControlValueChangedEventArgs e)
     {
         this.ApplyControlStates(e.ActionEditorState);
 
@@ -288,7 +288,7 @@ internal class AudioControlAction
         string displayName = string.Empty;
 
         ActionEditorControlState endpointControlState = e.ActionEditorState.GetControlState(ActionEditorControl.Endpoint.ToLower());
-        this.EndpointDisplayNames.TryGetValue(endpointControlState.Value, out string endpointDisplayName);
+        this.EndpointDisplayNames.TryGetValue(endpointControlState.Value, out string? endpointDisplayName);
 
         if (this.Parent is ActionEditorCommand)
         {
@@ -299,7 +299,7 @@ internal class AudioControlAction
             displayName += "Dial - ";
         }
 
-        string channel = Enum.Parse(typeof(ActionChannel), e.ActionEditorState.GetControlValue(ActionEditorControl.Channel.ToLower()), true).ToString();
+        string channel = Enum.Parse(typeof(ActionChannel), e.ActionEditorState.GetControlValue(ActionEditorControl.Channel.ToLower()), true).ToString() ?? string.Empty;
         if (channel != ActionChannel.None.ToString())
         {
             displayName += $"{channel} - ";
@@ -309,7 +309,7 @@ internal class AudioControlAction
 
         if (endpointControlState.Value == COMMUNICATIONS_NAME || endpointControlState.Value == MULTIMEDIA_NAME)
         {
-            string type = Enum.Parse(typeof(EndpointType), e.ActionEditorState.GetControlValue(ActionEditorControl.Type.ToLower()), true).ToString();
+            string type = Enum.Parse(typeof(EndpointType), e.ActionEditorState.GetControlValue(ActionEditorControl.Type.ToLower()), true).ToString() ?? string.Empty;
             displayName += $" {type.ToLower()}";
         }
 
@@ -410,11 +410,11 @@ internal class AudioControlAction
 
             channel = ActionChannel.None;
             type = EndpointType.Capture;
-            endpointId = null;
-            endpointName = null;
+            endpointId = string.Empty;
+            endpointName = string.Empty;
             toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
-            toggleDefaultEndpoint1Id = null;
-            toggleDefaultEndpoint2Id = null;
+            toggleDefaultEndpoint1Id = string.Empty;
+            toggleDefaultEndpoint2Id = string.Empty;
             longPressAction = LongPressAction.None;
             return false;
         }
@@ -424,11 +424,11 @@ internal class AudioControlAction
     {
         channel = ActionChannel.None;
         type = EndpointType.Capture;
-        endpointId = null;
-        endpointName = null;
+        endpointId = string.Empty;
+        endpointName = string.Empty;
         toggleDefaultEndpointMode = ToggleDefaultEndpointMode.None;
-        toggleDefaultEndpoint1Id = null;
-        toggleDefaultEndpoint2Id = null;
+        toggleDefaultEndpoint1Id = string.Empty;
+        toggleDefaultEndpoint2Id = string.Empty;
         longPressAction = LongPressAction.None;
 
         if (actionParameters == null)
@@ -470,9 +470,9 @@ internal class AudioControlAction
     {
         if (this.TryDecodeActionParametersString(actionParametersString, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
         {
-            AudioImageData audioImageData = null;
+            AudioImageData? audioImageData = null;
             bool highlighted = AudioControlAction.IsHighlighted(actionParametersString, channel);
-            if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+            if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
             {
                 audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
             }
@@ -516,7 +516,7 @@ internal class AudioControlAction
         }
     }
 
-    private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
+    private void Plugin_OnElapsed(object? sender, ElapsedEventArgs e)
     {
         foreach (string imageId in this.ActionImageStore.ActionImageIds)
         {
@@ -547,7 +547,7 @@ internal class AudioControlAction
         if (this.TryDecodeActionParameters(actionParameters, out ActionChannel channel, out EndpointType type, out string endpointId, out string endpointName, out ToggleDefaultEndpointMode toggleDefaultEndpointMode, out string toggleDefaultEndpoint1Id, out string toggleDefaultEndpoint2Id, out LongPressAction longPressAction))
         {
             string actionParametersString = this.StringifyActionParameters(actionParameters);
-            if (this.ActionImageStore.TryGetImage(actionParametersString, PluginImage.GetImageSize(imageWidth, imageHeight), out BitmapImage bitmapImage))
+            if (this.ActionImageStore.TryGetImage(actionParametersString, PluginImage.GetImageSize(imageWidth, imageHeight), out BitmapImage? bitmapImage))
             {
                 return bitmapImage;
             }
@@ -585,7 +585,7 @@ internal class AudioControlAction
             {
                 if (channel == ActionChannel.None)
                 {
-                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+                    if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
                     {
                         AudioControl.ToggleMute(audioControl);
                     }
@@ -594,7 +594,7 @@ internal class AudioControlAction
                 {
                     if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out string endpointNameA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl audioControlA))
+                        if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl? audioControlA))
                         {
                             AudioControl.ToggleMute(audioControlA);
                         }
@@ -604,7 +604,7 @@ internal class AudioControlAction
                 {
                     if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out string endpointNameB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl audioControlB))
+                        if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl? audioControlB))
                         {
                             AudioControl.ToggleMute(audioControlB);
                         }
@@ -614,7 +614,7 @@ internal class AudioControlAction
                 {
                     if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out string endpointNameC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                     {
-                        if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl audioControlC))
+                        if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl? audioControlC))
                         {
                             AudioControl.ToggleMute(audioControlC);
                         }
@@ -652,14 +652,14 @@ internal class AudioControlAction
             }
             else if (touchEvent.EventType == DeviceTouchEventType.DoubleTap)
             {
-                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
                 {
                     AudioControl.ToggleMute(audioControl);
                 }
             }
             else if (touchEvent.EventType == DeviceTouchEventType.LongPress)
             {
-                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
                 {
                     if (longPressAction == LongPressAction.MuteAll)
                     {
@@ -697,7 +697,7 @@ internal class AudioControlAction
             }
             else if (touchEvent.EventType == DeviceTouchEventType.Move)
             {
-                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
                 {
                     if (touchEvent.GetOrientation() == PluginExtension.DeviceTouchEventOrientation.Horizontal)
                     {
@@ -745,7 +745,7 @@ internal class AudioControlAction
         {
             if (channel == ActionChannel.None)
             {
-                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl? audioControl))
                 {
                     AudioControl.SetRelativeVolume(audioControl, diff);
                 }
@@ -754,7 +754,7 @@ internal class AudioControlAction
             {
                 if (this.TryDecodeActionParametersString(ChannelA, out ActionChannel channelA, out EndpointType typeA, out string endpointIdA, out string endpointNameA, out ToggleDefaultEndpointMode toggleDefaultEndpointModeA, out string toggleDefaultEndpoint1IdA, out string toggleDefaultEndpoint2IdA, out LongPressAction longPressActionA))
                 {
-                    if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl audioControlA))
+                    if (AudioControl.TryGetAudioControl(endpointIdA, endpointNameA, out IAudioControl? audioControlA))
                     {
                         AudioControl.SetRelativeVolume(audioControlA, diff);
                     }
@@ -764,7 +764,7 @@ internal class AudioControlAction
             {
                 if (this.TryDecodeActionParametersString(ChannelB, out ActionChannel channelB, out EndpointType typeB, out string endpointIdB, out string endpointNameB, out ToggleDefaultEndpointMode toggleDefaultEndpointModeB, out string toggleDefaultEndpoint1IdB, out string toggleDefaultEndpoint2IdB, out LongPressAction longPressActionB))
                 {
-                    if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl audioControlB))
+                    if (AudioControl.TryGetAudioControl(endpointIdB, endpointNameB, out IAudioControl? audioControlB))
                     {
                         AudioControl.SetRelativeVolume(audioControlB, diff);
                     }
@@ -774,7 +774,7 @@ internal class AudioControlAction
             {
                 if (this.TryDecodeActionParametersString(ChannelC, out ActionChannel channelC, out EndpointType typeC, out string endpointIdC, out string endpointNameC, out ToggleDefaultEndpointMode toggleDefaultEndpointModeC, out string toggleDefaultEndpoint1IdC, out string toggleDefaultEndpoint2IdC, out LongPressAction longPressActionC))
                 {
-                    if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl audioControlC))
+                    if (AudioControl.TryGetAudioControl(endpointIdC, endpointNameC, out IAudioControl? audioControlC))
                     {
                         AudioControl.SetRelativeVolume(audioControlC, diff);
                     }

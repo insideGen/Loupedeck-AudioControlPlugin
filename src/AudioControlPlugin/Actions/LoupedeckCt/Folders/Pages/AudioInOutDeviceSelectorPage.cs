@@ -27,10 +27,10 @@ internal class AudioInOutDeviceSelectorPage : FolderPage
 
     public override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
     {
-        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
         {
             PluginImage.GetImageSize(imageSize, out int width, out int height);
-            using (Bitmap iconBmp = PluginImage.GetIcon(audioControl.IconPath))
+            using (Bitmap iconBmp = PluginImage.GetIcon(audioControl.IconPath) ?? PluginImage.DrawBlackImage(imageSize).ToBitmap())
             using (Bitmap image = new Bitmap(width, height))
             using (Graphics graphics = Graphics.FromImage(image))
             using (Font valueFont = new Font("Calibri", 11, FontStyle.Bold))
@@ -69,7 +69,7 @@ internal class AudioInOutDeviceSelectorPage : FolderPage
     {
         if (touchEvent.EventType == DeviceTouchEventType.Tap)
         {
-            if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+            if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
             {
                 AudioControl.MMAudio.AudioPolicyConfig.SetPersistedDefaultAudioEndpoint((uint)this.Session.ProcessId, this.Flow, Role.Multimedia, audioControl.Id);
                 AudioControl.MMAudio.AudioPolicyConfig.SetPersistedDefaultAudioEndpoint((uint)this.Session.ProcessId, this.Flow, Role.Console, audioControl.Id);

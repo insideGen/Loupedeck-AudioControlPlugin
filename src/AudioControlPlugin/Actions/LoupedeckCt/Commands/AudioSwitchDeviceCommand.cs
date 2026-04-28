@@ -43,7 +43,7 @@ internal abstract class AudioSwitchDeviceCommand : ActionEditorCommand
         return false;
     }
 
-    private void OnListboxItemsRequested(object sender, ActionEditorListboxItemsRequestedEventArgs e)
+    private void OnListboxItemsRequested(object? sender, ActionEditorListboxItemsRequestedEventArgs e)
     {
         if (e.ControlName.Equals(DEVICE))
         {

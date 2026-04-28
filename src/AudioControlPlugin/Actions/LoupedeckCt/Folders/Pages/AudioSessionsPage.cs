@@ -19,10 +19,10 @@ internal class AudioSessionsPage : FolderPage
     private readonly bool _isDefaultDevices;
     private readonly DefaultType _defaultType;
 
-    private IAudioControlDevice _render = null;
-    private IAudioControlDevice _capture = null;
-    private IEnumerable<IAudioControlSession> _sessions = null;
-    private string _selectedActionName = null;
+    private IAudioControlDevice? _render = null;
+    private IAudioControlDevice? _capture = null;
+    private IEnumerable<IAudioControlSession>? _sessions = null;
+    private string _selectedActionName = string.Empty;
 
     public AudioSessionsPage(Folder parent) : base(parent)
     {
@@ -48,7 +48,7 @@ internal class AudioSessionsPage : FolderPage
         this._defaultType = defaultType;
     }
 
-    private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
+    private void Plugin_OnElapsed(object? sender, ElapsedEventArgs e)
     {
         foreach (string actionName in base.ButtonActionNames)
         {
@@ -56,22 +56,22 @@ internal class AudioSessionsPage : FolderPage
         }
     }
 
-    private void MMAudio_OnSessionStateChanged(object sender, AudioSessionState e)
+    private void MMAudio_OnSessionStateChanged(object? sender, AudioSessionState e)
     {
         base.ButtonActionNamesChanged();
     }
 
-    private void MMAudio_OnDeviceStateChanged(object sender, DeviceStateEventArgs e)
+    private void MMAudio_OnDeviceStateChanged(object? sender, DeviceStateEventArgs e)
     {
         base.ButtonActionNamesChanged();
     }
 
-    private void MMAudio_OnDevicePropertyChanged(object sender, string e)
+    private void MMAudio_OnDevicePropertyChanged(object? sender, string e)
     {
         base.ButtonActionNamesChanged();
     }
 
-    private void MMAudio_OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void MMAudio_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         base.ButtonActionNamesChanged();
     }
@@ -101,7 +101,7 @@ internal class AudioSessionsPage : FolderPage
 
     public void RefreshActionImage(string actionParameter)
     {
-        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
         {
             bool highlighted = this._selectedActionName == actionParameter;
             AudioImageData audioImageData = AudioControl.CreateAudioData(audioControl, highlighted);
@@ -114,7 +114,7 @@ internal class AudioSessionsPage : FolderPage
 
     public BitmapImage GetImage(string actionParameter, PluginImageSize imageSize)
     {
-        if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage bitmapImage))
+        if (this._actionImageStore.TryGetImage(actionParameter, imageSize, out BitmapImage? bitmapImage))
         {
             return bitmapImage;
         }
@@ -137,7 +137,10 @@ internal class AudioSessionsPage : FolderPage
                 this._render = AudioControl.MMAudio.DefaultMultimediaRender;
                 this._capture = AudioControl.MMAudio.DefaultMultimediaCapture;
             }
-            this._sessions = this._render.Sessions.Where(s => s.IsSystemSoundsSession || s.State == AudioSessionState.Active);
+            if (this._render is not null)
+            {
+                this._sessions = this._render.Sessions.Where(s => s.IsSystemSoundsSession || s.State == AudioSessionState.Active);
+            }
         }
         else if (this._render is null)
         {
@@ -147,15 +150,18 @@ internal class AudioSessionsPage : FolderPage
         {
             this._sessions = this._render.Sessions.Where(s => s.IsSystemSoundsSession || s.State == AudioSessionState.Active);
         }
-        foreach (IAudioControlSession session in this._sessions)
+        if (this._sessions is not null)
         {
-            if (session.IsSystemSoundsSession)
+            foreach (IAudioControlSession session in this._sessions)
             {
-                actionNames.Insert(0, session.InstanceId);
-            }
-            else
-            {
-                actionNames.Add(session.InstanceId);
+                if (session.IsSystemSoundsSession)
+                {
+                    actionNames.Insert(0, session.InstanceId);
+                }
+                else
+                {
+                    actionNames.Add(session.InstanceId);
+                }
             }
         }
         if (this._render != null)
@@ -193,7 +199,7 @@ internal class AudioSessionsPage : FolderPage
     {
         if (actionParameter == "encoder-rotate")
         {
-            if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
+            if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl? audioControl))
             {
                 AudioControl.SetRelativeVolume(audioControl, encoderEvent.Clicks);
             }
@@ -207,7 +213,7 @@ internal class AudioSessionsPage : FolderPage
         {
             if (buttonEvent.EventType == DeviceButtonEventType.Press)
             {
-                if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl audioControl))
+                if (AudioControl.TryGetAudioControl(this._selectedActionName, null, out IAudioControl? audioControl))
                 {
                     AudioControl.ToggleMute(audioControl);
                 }
@@ -218,7 +224,7 @@ internal class AudioSessionsPage : FolderPage
 
     public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
     {
-        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl audioControl))
+        if (AudioControl.TryGetAudioControl(actionParameter, null, out IAudioControl? audioControl))
         {
             if (touchEvent.EventType == DeviceTouchEventType.Tap)
             {

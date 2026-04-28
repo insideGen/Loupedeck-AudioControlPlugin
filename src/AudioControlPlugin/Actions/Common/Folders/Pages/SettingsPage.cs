@@ -122,7 +122,7 @@ internal class SettingsPage : FolderPage
 
     public override void RunCommand(string actionParameter) => this.ProcessTouchEvent(actionParameter, null);
 
-    public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
+    public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent? touchEvent)
     {
         if (touchEvent is null || touchEvent.EventType == DeviceTouchEventType.Press)
         {

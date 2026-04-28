@@ -5,13 +5,13 @@ using System.Linq;
 
 internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
 {
-    private FolderPage _homePage = null;
+    private FolderPage? _homePage = null;
 
     public List<string> ButtonActionNames { get; }
 
     public Stack<FolderPage> PageStack { get; }
 
-    public FolderPage HomePage
+    public FolderPage? HomePage
     {
         get
         {
@@ -21,11 +21,14 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         {
             this._homePage = value;
             this.PageStack.Clear();
-            this.PageStack.Push(this._homePage);
+            if (this._homePage is not null)
+            {
+                this.PageStack.Push(this._homePage);
+            }
         }
     }
 
-    public FolderPage CurrentPage
+    public FolderPage? CurrentPage
     {
         get
         {
@@ -37,7 +40,7 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         }
     }
 
-    protected Folder(string displayName, string description = null, string groupName = null, DeviceType supportedDevices = DeviceType.All) : base()
+    protected Folder(string displayName, string? description = null, string? groupName = null, DeviceType supportedDevices = DeviceType.All) : base()
     {
         base.DisplayName = displayName;
         base.Description = description;
@@ -90,7 +93,7 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         pageActionParameter = actionParameter.Substring(index + 1);
     }
 
-    public FolderPage GetPage(string pageName)
+    public FolderPage? GetPage(string pageName)
     {
         return this.PageStack.FirstOrDefault(p => p.Name == pageName);
     }
@@ -107,7 +110,10 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         this.CurrentPage?.Leave();
         this.CurrentPage?.Unload();
         this.PageStack.Clear();
-        this.PageStack.Push(this.HomePage);
+        if (this._homePage is not null)
+        {
+            this.PageStack.Push(this._homePage);
+        }
         return base.Deactivate();
     }
 

@@ -1,6 +1,7 @@
 ﻿namespace Loupedeck.AudioControlPlugin;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 
@@ -23,7 +24,7 @@ internal static class AudioControl
         Session
     }
 
-    public static bool TryGetEndpointType(string endpointId, string endpointName, out EndpointType? type)
+    public static bool TryGetEndpointType(string endpointId, string? endpointName, [NotNullWhen(true)] out EndpointType? type)
     {
         if (!string.IsNullOrEmpty(endpointId))
         {
@@ -34,7 +35,7 @@ internal static class AudioControl
         return false;
     }
 
-    public static bool TryGetAudioControl(string endpointId, string endpointName, out IAudioControl audioControl)
+    public static bool TryGetAudioControl(string endpointId, string? endpointName, [NotNullWhen(true)] out IAudioControl? audioControl)
     {
         if (TryGetEndpointType(endpointId, endpointName, out EndpointType? type))
         {

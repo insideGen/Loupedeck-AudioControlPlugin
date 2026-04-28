@@ -12,10 +12,10 @@ internal class AudioImageFactory : IActionImageFactory<AudioImageData>
 
     private readonly ConcurrentDictionary<string, Bitmap> iconsDictionary;
 
-    private readonly Bitmap crossMuteIcon;
-    private readonly Bitmap imageWidth50;
     private readonly Graphics graphicsWidth50;
+    private readonly Bitmap imageWidth50;
     private readonly Bitmap imageWidth80;
+    private readonly Bitmap crossMuteIcon;
     private readonly Graphics graphicsWidth80;
     private readonly Font calibri7Font;
     private readonly Font calibri10Font;
@@ -47,6 +47,8 @@ internal class AudioImageFactory : IActionImageFactory<AudioImageData>
         this.cFormat = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
     }
 
+    public IActionImageFactory<AudioImageData> Create() => new AudioImageFactory();
+
     private static int GraduationRound(int max, float ratio)
     {
         float value = max * ratio;
@@ -74,18 +76,20 @@ internal class AudioImageFactory : IActionImageFactory<AudioImageData>
 
     private Bitmap CreateMutedIcon(string iconPath)
     {
-        Bitmap icon = null;
+        Bitmap? icon = null;
+
         if (!string.IsNullOrEmpty(iconPath))
         {
-            icon = PluginImage.GetIcon(iconPath).Scale(32, 32).BlueLightFilter().Desaturate(0.4f);
-            if (icon != null)
-            {
-                using (Graphics graphics = Graphics.FromImage(icon))
-                {
-                    graphics.DrawImage(this.crossMuteIcon, 0, 0, this.crossMuteIcon.Width, this.crossMuteIcon.Height);
-                }
-            }
+            icon = PluginImage.GetIcon(iconPath)?.Scale(32, 32).BlueLightFilter().Desaturate(0.4f);
         }
+
+        icon ??= PluginImage.DrawBlackImage(PluginImageSize.Width90).ToBitmap();
+
+        using (Graphics graphics = Graphics.FromImage(icon))
+        {
+            graphics.DrawImage(this.crossMuteIcon, 0, 0, this.crossMuteIcon.Width, this.crossMuteIcon.Height);
+        }
+
         return icon;
     }
 
@@ -204,12 +208,12 @@ internal class AudioImageFactory : IActionImageFactory<AudioImageData>
             }
             else
             {
-                icon = this.iconsDictionary.GetOrAdd($"{audioData.MutedIconPath}+muted", (key) => PluginImage.GetIcon(audioData.MutedIconPath).Scale(32, 32));
+                icon = this.iconsDictionary.GetOrAdd($"{audioData.MutedIconPath}+muted", (key) => (PluginImage.GetIcon(audioData.MutedIconPath) ?? PluginImage.DrawBlackImage(PluginImageSize.Width90).ToBitmap()).Scale(32, 32));
             }
         }
         else
         {
-            icon = this.iconsDictionary.GetOrAdd($"{audioData.UnmutedIconPath}+unmuted", (key) => PluginImage.GetIcon(audioData.UnmutedIconPath).Scale(32, 32));
+            icon = this.iconsDictionary.GetOrAdd($"{audioData.UnmutedIconPath}+unmuted", (key) => (PluginImage.GetIcon(audioData.UnmutedIconPath) ?? PluginImage.DrawBlackImage(PluginImageSize.Width90).ToBitmap()).Scale(32, 32));
         }
         if (imageSize == PluginImageSize.Width60)
         {
@@ -250,7 +254,7 @@ internal class AudioImageFactory : IActionImageFactory<AudioImageData>
                 }
 #endif
                 ImageConverter converter = new ImageConverter();
-                return BitmapImage.FromArray((byte[])converter.ConvertTo(image, typeof(byte[])));
+                return BitmapImage.FromArray(converter.ConvertTo(image, typeof(byte[])) as byte[]);
             }
         }
     }

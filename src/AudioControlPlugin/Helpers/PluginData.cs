@@ -2,8 +2,8 @@
 
 internal static class PluginData
 {
-    private static Plugin _plugin = null;
-    private static string _directory = null;
+    private static Plugin? _plugin = null;
+    private static string _directory = string.Empty;
 
     public static string Directory
     {
@@ -18,7 +18,7 @@ internal static class PluginData
                 }
                 else
                 {
-                    _directory = null;
+                    _directory = string.Empty;
                 }
             }
             return _directory;

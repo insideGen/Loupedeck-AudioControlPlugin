@@ -8,7 +8,7 @@ using System.Reflection;
 // That is, the Build Action of the files must be "Embedded Resource" in the plugin project.
 internal static class PluginResources
 {
-    private static Assembly _assembly;
+    private static Assembly? _assembly;
 
     public static void Init(Assembly assembly)
     {

@@ -2,6 +2,7 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 internal class ActionImageStore<T> where T : IActionImageData
 {
@@ -28,7 +29,7 @@ internal class ActionImageStore<T> where T : IActionImageData
         this.actionWidth90Images = new ConcurrentDictionary<string, BitmapImage>();
     }
 
-    public bool TryGetImage(string id, PluginImageSize imageSize, out BitmapImage bitmapImage)
+    public bool TryGetImage(string id, PluginImageSize imageSize, [NotNullWhen(true)] out BitmapImage? bitmapImage)
     {
         ConcurrentDictionary<string, BitmapImage> actionImages;
         if (imageSize == PluginImageSize.Width60)
@@ -39,8 +40,8 @@ internal class ActionImageStore<T> where T : IActionImageData
         {
             actionImages = this.actionWidth90Images;
         }
-        bool exist = actionImages.TryGetValue(id, out BitmapImage storedBitmapImage);
-        if (exist)
+        bool exist = actionImages.TryGetValue(id, out BitmapImage? storedBitmapImage);
+        if (exist && storedBitmapImage is not null)
         {
             bitmapImage = BitmapImage.FromArray(storedBitmapImage.ToArray());
             return true;
@@ -54,10 +55,10 @@ internal class ActionImageStore<T> where T : IActionImageData
 
     public bool UpdateImage(string id, T newActionData)
     {
-        bool exist = this.actionImageData.TryGetValue(id, out T lastActionData);
+        bool exist = this.actionImageData.TryGetValue(id, out T? lastActionData);
         if (!exist || !newActionData.Equals(lastActionData))
         {
-            IActionImageFactory<T> factory = this.actionImageFactories.GetOrAdd(id, this.actionImageFactory.GetType().CreateInstance() as IActionImageFactory<T>);
+            IActionImageFactory<T> factory = this.actionImageFactories.GetOrAdd(id, this.actionImageFactory.Create());
             this.actionImageData.AddOrUpdate(id, newActionData, (key, oldValue) => newActionData);
 
             BitmapImage bitmapWidth60Image = factory.DrawBitmapImage(newActionData, PluginImageSize.Width60);
