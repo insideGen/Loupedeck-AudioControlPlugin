@@ -84,6 +84,10 @@ internal abstract class FolderPage
         return PluginImage.DrawTextImage(actionParameter, false, imageSize);
     }
 
+    public virtual void RunCommand(string actionParameter)
+    {
+    }
+
     public virtual void ApplyAdjustment(string actionParameter, int diff)
     {
     }

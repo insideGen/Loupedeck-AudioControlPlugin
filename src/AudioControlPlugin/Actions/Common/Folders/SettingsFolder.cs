@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.Common;
 
 internal class SettingsFolder : Folder
 {
@@ -8,7 +8,7 @@ internal class SettingsFolder : Folder
     public const string DESCRIPTION = "";
     public const string GROUP_NAME = "";
 
-    public SettingsFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME, DeviceType.LoupedeckCtFamily)
+    public SettingsFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
     {
         base.HomePage = new SettingsPage(this);
     }

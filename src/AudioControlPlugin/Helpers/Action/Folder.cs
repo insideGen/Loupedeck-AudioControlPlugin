@@ -190,6 +190,23 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         return PluginImage.DrawBlackImage(imageSize);
     }
 
+    public override void RunCommand(string actionParameter)
+    {
+        this.ParseActionParameter(actionParameter, out string pageName, out string pageActionParameter);
+        if (this.GetPage(pageName) is FolderPage page && page == this.CurrentPage)
+        {
+            if (pageActionParameter == "@back")
+            {
+                this.LeavePage();
+            }
+            else
+            {
+                page.RunCommand(pageActionParameter);
+            }
+        }
+        base.RunCommand(pageActionParameter);
+    }
+
     public override void ApplyAdjustment(string actionParameter, int diff)
     {
         this.ParseActionParameter(actionParameter, out string pageName, out string pageActionParameter);
@@ -197,6 +214,7 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         {
             page.ApplyAdjustment(pageActionParameter, diff);
         }
+        base.ApplyAdjustment(pageActionParameter, diff);
     }
 
     public override bool ProcessButtonEvent2(string actionParameter, DeviceButtonEvent2 buttonEvent)

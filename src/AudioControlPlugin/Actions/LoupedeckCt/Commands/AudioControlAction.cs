@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.LoupedeckCt;
 
 using System.Collections.Concurrent;
 using System.Data;

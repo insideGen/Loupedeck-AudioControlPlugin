@@ -1,17 +1,19 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.LoupedeckCt;
 
-internal class AudioControlMuteCommand : ActionEditorCommand, IActionEditorAction
+internal class AudioControlVolumeAdjustment : ActionEditorAdjustment, IActionEditorAction
 {
-    private const string DISPLAY_NAME = "Audio touch action";
+    private const string DISPLAY_NAME = "Audio dial action";
 
     private AudioControlAction Action { get; }
 
-    public AudioControlMuteCommand() : base(DeviceType.LoupedeckCtFamily)
+    public AudioControlVolumeAdjustment() : base(hasReset: true, DeviceType.LoupedeckCtFamily)
     {
-        base.DisplayName = $"{DISPLAY_NAME}";
+        base.DisplayName = $"{DISPLAY_NAME} - Adjustment";
         base.Description = "";
         base.GroupName = null;
         base.IsWidget = true;
+
+        base.ResetCommandDisplayName = $"{DISPLAY_NAME} - Adjustment reset";
 
         this.Action = new AudioControlAction(this);
     }
@@ -27,6 +29,14 @@ internal class AudioControlMuteCommand : ActionEditorCommand, IActionEditorActio
     protected override bool ProcessButtonEvent2(ActionEditorActionParameters actionParameters, DeviceButtonEvent2 buttonEvent) => this.Action.ProcessButtonEvent2(actionParameters, buttonEvent);
 
     protected override bool ProcessTouchEvent(ActionEditorActionParameters actionParameters, DeviceTouchEvent touchEvent) => this.Action.ProcessTouchEvent(actionParameters, touchEvent);
+
+    protected override string GetAdjustmentDisplayName(ActionEditorActionParameters actionParameters) => this.Action.GetDisplayName(actionParameters);
+
+    protected override BitmapImage GetAdjustmentImage(ActionEditorActionParameters actionParameters, int imageWidth, int imageHeight) => this.Action.GetImage(actionParameters, imageWidth, imageHeight);
+
+    protected override bool ApplyAdjustment(ActionEditorActionParameters actionParameters, int diff) => this.Action.ApplyAdjustment(actionParameters, diff);
+
+    protected override bool ProcessEncoderEvent(ActionEditorActionParameters actionParameters, DeviceEncoderEvent encoderEvent) => this.Action.ProcessEncoderEvent(actionParameters, encoderEvent);
 
     public new void ActionImageChanged() => base.ActionImageChanged();
 

@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.LoupedeckCt;
 
 using System.Collections.Generic;
 using System.Drawing;
@@ -111,7 +111,7 @@ internal class AllInOnePage : FolderPage
             }
             else if (actionParameter == "Settings")
             {
-                this.NavigateTo(new SettingsPage(this.Folder));
+                this.NavigateTo(new Common.SettingsPage(this.Folder));
             }
         }
         return false;

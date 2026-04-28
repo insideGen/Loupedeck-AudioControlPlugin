@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.LoupedeckCt;
 
 internal class AudioMultimediaFolder : Folder
 {

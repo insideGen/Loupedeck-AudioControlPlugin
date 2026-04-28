@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
+﻿namespace Loupedeck.AudioControlPlugin.Common;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -120,9 +120,11 @@ internal class SettingsPage : FolderPage
         return PluginImage.DrawBlackImage(imageSize);
     }
 
+    public override void RunCommand(string actionParameter) => this.ProcessTouchEvent(actionParameter, null);
+
     public override bool ProcessTouchEvent(string actionParameter, DeviceTouchEvent touchEvent)
     {
-        if (touchEvent.EventType == DeviceTouchEventType.Press)
+        if (touchEvent is null || touchEvent.EventType == DeviceTouchEventType.Press)
         {
             if (actionParameter == Command.PluginDataDirectory.ToString())
             {
