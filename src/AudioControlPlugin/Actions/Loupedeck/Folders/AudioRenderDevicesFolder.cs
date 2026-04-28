@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 using WindowsInterop.CoreAudio;
 
@@ -10,7 +10,7 @@ internal class AudioRenderDevicesFolder : Folder
     public const string DESCRIPTION = "";
     public const string GROUP_NAME = "";
 
-    public AudioRenderDevicesFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
+    public AudioRenderDevicesFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME, DeviceType.LoupedeckCtFamily)
     {
         base.HomePage = new AudioDevicesPage(this, DataFlow.Render);
     }

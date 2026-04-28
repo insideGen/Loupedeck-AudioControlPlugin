@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,14 +19,14 @@ internal class SettingsPage : FolderPage
         SaveImageOnDisk = 7,
         ClearAllSettings = 8
 #else
-            PluginDataDirectory = -1,
-            BlueLightFilterEnabled = 2,
-            IsWindowsIconStyle = 3,
-            PreferDecibels = 4,
-            PeakMeterEnabled = 5,
-            FPS = 6,
-            SaveImageOnDisk = -7,
-            ClearAllSettings = -8
+        PluginDataDirectory = -1,
+        BlueLightFilterEnabled = 2,
+        IsWindowsIconStyle = 3,
+        PreferDecibels = 4,
+        PeakMeterEnabled = 5,
+        FPS = 6,
+        SaveImageOnDisk = -7,
+        ClearAllSettings = -8
 #endif
     }
 

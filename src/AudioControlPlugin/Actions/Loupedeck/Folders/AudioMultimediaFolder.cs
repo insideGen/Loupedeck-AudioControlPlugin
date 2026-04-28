@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 internal class AudioMultimediaFolder : Folder
 {
@@ -8,7 +8,7 @@ internal class AudioMultimediaFolder : Folder
     public const string DESCRIPTION = "";
     public const string GROUP_NAME = "";
 
-    public AudioMultimediaFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME)
+    public AudioMultimediaFolder() : base(DISPLAY_NAME, DESCRIPTION, GROUP_NAME, DeviceType.LoupedeckCtFamily)
     {
         base.HomePage = new AudioSessionsPage(this, AudioSessionsPage.DefaultType.Multimedia);
     }

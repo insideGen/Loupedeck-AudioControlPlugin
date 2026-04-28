@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 using System.Collections.Concurrent;
 using System.Data;
@@ -8,8 +8,6 @@ using System.Timers;
 using WindowsInterop;
 using WindowsInterop.CoreAudio;
 using WindowsInterop.Win32;
-
-using static Loupedeck.AudioControlPlugin.PluginExtension;
 
 internal class AudioControlAction
 {
@@ -701,7 +699,7 @@ internal class AudioControlAction
             {
                 if (AudioControl.TryGetAudioControl(endpointId, endpointName, out IAudioControl audioControl))
                 {
-                    if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Horizontal)
+                    if (touchEvent.GetOrientation() == PluginExtension.DeviceTouchEventOrientation.Horizontal)
                     {
                         if (toggleDefaultEndpointMode != ToggleDefaultEndpointMode.None)
                         {
@@ -725,7 +723,7 @@ internal class AudioControlAction
                             }
                         }
                     }
-                    else if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
+                    else if (touchEvent.GetOrientation() == PluginExtension.DeviceTouchEventOrientation.Vertical)
                     {
                         AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : -1) * 10);
                     }

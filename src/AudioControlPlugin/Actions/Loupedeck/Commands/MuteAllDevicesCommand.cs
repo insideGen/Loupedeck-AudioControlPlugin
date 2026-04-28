@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 using System.Drawing;
 using System.Linq;
@@ -7,7 +7,7 @@ using WindowsInterop.CoreAudio;
 
 internal class MuteAllDevicesCommand : PluginDynamicCommand
 {
-    public MuteAllDevicesCommand() : base()
+    public MuteAllDevicesCommand() : base(DeviceType.LoupedeckCtFamily)
     {
         base.AddParameter(DataFlow.Capture.ToLower(), "Mute/unmute all capture devices", "Group action");
         base.AddParameter(DataFlow.Render.ToLower(), "Mute/unmute all render devices", "Group action");

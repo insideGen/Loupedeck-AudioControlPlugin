@@ -37,11 +37,12 @@ internal abstract class Folder : PluginDynamicFolder, IPluginDynamicFolder
         }
     }
 
-    protected Folder(string displayName, string description = null, string groupName = null) : base()
+    protected Folder(string displayName, string description = null, string groupName = null, DeviceType supportedDevices = DeviceType.All) : base()
     {
         base.DisplayName = displayName;
         base.Description = description;
         base.GroupName = groupName;
+        base.SupportedDevices = supportedDevices;
 
         this.ButtonActionNames = new List<string>();
         this.PageStack = new Stack<FolderPage>();

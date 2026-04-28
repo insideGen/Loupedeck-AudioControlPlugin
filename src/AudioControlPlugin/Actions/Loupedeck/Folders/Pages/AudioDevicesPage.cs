@@ -1,4 +1,4 @@
-﻿namespace Loupedeck.AudioControlPlugin;
+﻿namespace Loupedeck.AudioControlPlugin.Loupedeck;
 
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -7,47 +7,17 @@ using System.Timers;
 
 using WindowsInterop.CoreAudio;
 
-using static Loupedeck.AudioControlPlugin.PluginExtension;
-
-internal class AudioSessionsPage : FolderPage
+internal class AudioDevicesPage : FolderPage
 {
-    public enum DefaultType
+    private readonly DataFlow _dataFlow;
+    private readonly ActionImageStore<AudioImageData> _actionImageStore;
+
+    private string _selectedActionName = string.Empty;
+
+    public AudioDevicesPage(Folder parent, DataFlow dataFlow) : base(parent)
     {
-        Communications,
-        Multimedia
-    }
-
-    private readonly ActionImageStore<AudioImageData> _actionImageStore = new ActionImageStore<AudioImageData>(new AudioImageFactory());
-    private readonly bool _isDefaultDevices;
-    private readonly DefaultType _defaultType;
-
-    private IAudioControlDevice _render = null;
-    private IAudioControlDevice _capture = null;
-    private IEnumerable<IAudioControlSession> _sessions = null;
-    private string _selectedActionName = null;
-
-    public AudioSessionsPage(Folder parent) : base(parent)
-    {
-        this._isDefaultDevices = false;
-    }
-
-    public AudioSessionsPage(Folder parent, IAudioControlDevice render) : base(parent)
-    {
-        this._isDefaultDevices = false;
-        this._render = render;
-    }
-
-    public AudioSessionsPage(Folder parent, IAudioControlDevice render, IAudioControlDevice capture) : base(parent)
-    {
-        this._isDefaultDevices = false;
-        this._render = render;
-        this._capture = capture;
-    }
-
-    public AudioSessionsPage(Folder parent, DefaultType defaultType) : base(parent)
-    {
-        this._isDefaultDevices = true;
-        this._defaultType = defaultType;
+        this._dataFlow = dataFlow;
+        this._actionImageStore = new ActionImageStore<AudioImageData>(new AudioImageFactory());
     }
 
     private void Plugin_OnElapsed(object sender, ElapsedEventArgs e)
@@ -56,11 +26,6 @@ internal class AudioSessionsPage : FolderPage
         {
             this.RefreshActionImage(actionName);
         }
-    }
-
-    private void MMAudio_OnSessionStateChanged(object sender, AudioSessionState e)
-    {
-        base.ButtonActionNamesChanged();
     }
 
     private void MMAudio_OnDeviceStateChanged(object sender, DeviceStateEventArgs e)
@@ -81,7 +46,6 @@ internal class AudioSessionsPage : FolderPage
     public override void Enter()
     {
         AudioControlPlugin.RefreshTimer.Elapsed += this.Plugin_OnElapsed;
-        AudioControl.MMAudio.SessionStateChanged += this.MMAudio_OnSessionStateChanged;
         AudioControl.MMAudio.DeviceStateChanged += this.MMAudio_OnDeviceStateChanged;
         AudioControl.MMAudio.DevicePropertyChanged += this.MMAudio_OnDevicePropertyChanged;
         AudioControl.MMAudio.Devices.CollectionChanged += this.MMAudio_OnCollectionChanged;
@@ -90,7 +54,6 @@ internal class AudioSessionsPage : FolderPage
     public override void Leave()
     {
         AudioControlPlugin.RefreshTimer.Elapsed -= this.Plugin_OnElapsed;
-        AudioControl.MMAudio.SessionStateChanged -= this.MMAudio_OnSessionStateChanged;
         AudioControl.MMAudio.DeviceStateChanged -= this.MMAudio_OnDeviceStateChanged;
         AudioControl.MMAudio.DevicePropertyChanged -= this.MMAudio_OnDevicePropertyChanged;
         AudioControl.MMAudio.Devices.CollectionChanged -= this.MMAudio_OnCollectionChanged;
@@ -127,46 +90,21 @@ internal class AudioSessionsPage : FolderPage
     public override IEnumerable<string> GetButtonPressActionNames(DeviceType deviceType)
     {
         List<string> actionNames = new List<string>();
-        if (this._isDefaultDevices)
+        IEnumerable<IAudioControlDevice> devices = null;
+        if (this._dataFlow == DataFlow.Capture)
         {
-            if (this._defaultType == DefaultType.Communications)
+            devices = AudioControl.MMAudio.CaptureDevices;
+        }
+        else if (this._dataFlow == DataFlow.Render)
+        {
+            devices = AudioControl.MMAudio.RenderDevices;
+        }
+        if (devices != null)
+        {
+            foreach (IAudioControlDevice device in devices.Where(x => x.State == DeviceState.Active))
             {
-                this._render = AudioControl.MMAudio.DefaultCommunicationsRender;
-                this._capture = AudioControl.MMAudio.DefaultCommunicationsCapture;
+                actionNames.Add(device.Id);
             }
-            else if (this._defaultType == DefaultType.Multimedia)
-            {
-                this._render = AudioControl.MMAudio.DefaultMultimediaRender;
-                this._capture = AudioControl.MMAudio.DefaultMultimediaCapture;
-            }
-            this._sessions = this._render.Sessions.Where(s => s.IsSystemSoundsSession || s.State == AudioSessionState.Active);
-        }
-        else if (this._render is null)
-        {
-            this._sessions = AudioControl.MMAudio.RenderSessions.Where(s => !s.IsSystemSoundsSession && s.State == AudioSessionState.Active);
-        }
-        else
-        {
-            this._sessions = this._render.Sessions.Where(s => s.IsSystemSoundsSession || s.State == AudioSessionState.Active);
-        }
-        foreach (IAudioControlSession session in this._sessions)
-        {
-            if (session.IsSystemSoundsSession)
-            {
-                actionNames.Insert(0, session.InstanceId);
-            }
-            else
-            {
-                actionNames.Add(session.InstanceId);
-            }
-        }
-        if (this._render != null)
-        {
-            actionNames.Insert(0, this._render.Id);
-        }
-        if (this._capture != null)
-        {
-            actionNames.Insert(0, this._capture.Id);
         }
         return actionNames;
     }
@@ -236,15 +174,26 @@ internal class AudioSessionsPage : FolderPage
             }
             else if (touchEvent.EventType == DeviceTouchEventType.LongPress)
             {
-                if (audioControl is IAudioControlSession audioControlSession && !audioControlSession.IsSystemSoundsSession)
-                {
-                    this.NavigateTo(new AudioInOutSessionPage(base.Folder, audioControlSession));
-                }
                 this._selectedActionName = actionParameter;
+                if (audioControl is IAudioControlDevice audioControlDevice && audioControlDevice.DataFlow == DataFlow.Render)
+                {
+                    this.NavigateTo(new AudioSessionsPage(base.Folder, audioControlDevice));
+                }
             }
             else if (touchEvent.EventType == DeviceTouchEventType.Move)
             {
-                if (touchEvent.GetOrientation() == DeviceTouchEventOrientation.Vertical)
+                if (touchEvent.GetOrientation() == PluginExtension.DeviceTouchEventOrientation.Horizontal)
+                {
+                    if (touchEvent.DeltaX > 0)
+                    {
+                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Multimedia);
+                    }
+                    else if (touchEvent.DeltaX < 0)
+                    {
+                        AudioControl.MMAudio.SetDefaultAudioEndpoint(audioControl.Id, Role.Communications);
+                    }
+                }
+                else if (touchEvent.GetOrientation() == PluginExtension.DeviceTouchEventOrientation.Vertical)
                 {
                     AudioControl.SetRelativeVolume(audioControl, (touchEvent.DeltaY < 0 ? 1 : touchEvent.DeltaY > 0 ? -1 : 0) * 10);
                 }
